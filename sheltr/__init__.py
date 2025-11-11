@@ -1,6 +1,7 @@
 import os
 
 from flask import (Flask, render_template)
+from flask_bootstrap import Bootstrap5
 
 def create_app(test_config=None):
     # Create and configure the app.
@@ -9,6 +10,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'sheltr.sqlite'),
     )
+    # Initialize Bootstrap.
+    bootstrap = Bootstrap5(app)
 
     if test_config is None:
         # Load the instance config, if it exists, when not testing
