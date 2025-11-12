@@ -1,15 +1,36 @@
 {% extends 'base.html' %}
 
-{% block header %}
-    <h1>{% block title %}Register{% endblock %}</h1>
-{% endblock %}
+{% block header %}{% endblock %}
 
 {% block content %}
-    <form method="post">
-        <label for="username">Username</label>
-        <input name="username" id="username" required>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Register">
-    </form>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Join Sheltr</h2>
+        <form method="post" class="auth-form">
+            <div class="auth-field">
+                <label for="username">Username</label>
+                <input name="username" id="username" required autofocus>
+            </div>
+            <div class="auth-field">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="auth-field">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <div class="auth-field">
+                <label for="confirm_password">Confirm password</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+            </div>
+            <div class="auth-actions">
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="link-row">
+                    <a href="{{ url_for('auth.login') }}">Back to login</a>
+                    <a href="{{ url_for('auth.forgot_password') }}">Need help?</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
