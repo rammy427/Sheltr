@@ -1,9 +1,71 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}Donations{% endblock %}</h1>
+    <h1 class="mx-auto text-center">{% block title %}Help Out{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <p>Test</p>
+    <div class="container mx-auto text-center">
+        <div class="row">
+            <div class="col">
+                <h2>Your Tasks</h2>
+                <h3>Volunteering in:</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Emergency</th>
+                            <th scope="col">Shelter</th>
+                            <th scope="col">Task Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>María</td>
+                            <td>Shelter 9</td>
+                            <td>Hand out food and drinks.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h2>Your Donations</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Emergency</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>María</td>
+                            <td>$100</td>
+                            <td>Sep. 20, 2017</td>
+                        </tr>
+                        <tr>
+                            <td>María</td>
+                            <td>$20</td>
+                            <td>Sep. 23, 2017</td>
+                        </tr>
+                        <tr>
+                            <td>María</td>
+                            <td>$50</td>
+                            <td>Sep. 23, 2017</td>
+                        </tr>
+                        <tr>
+                            <td>Irma</td>
+                            <td>$100</td>
+                            <td>Sep. 7, 2017</td>
+                        </tr>
+                        <tr>
+                            <td>Irma</td>
+                            <td>$50</td>
+                            <td>Sep. 7, 2017</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
