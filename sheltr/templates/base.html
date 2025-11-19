@@ -9,6 +9,9 @@
         <nav>
             <h1 class="mx-auto">Sheltr</h1>
             <ul>
+
+                <li> <a href="{{ url_for('emergency.view') }}">Emergencies</a></li>
+
                 {% if g.user %}
                     <li><span>{{ g.user['username'] }}</span></li>
                     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
