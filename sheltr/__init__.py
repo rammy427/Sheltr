@@ -40,4 +40,7 @@ def create_app(test_config=None):
     from . import donations
     app.register_blueprint(donations.bp)
     
+    from . import emergency
+    app.register_blueprint(emergency.bp)
+    
     return app
