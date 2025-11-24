@@ -45,5 +45,8 @@ def create_app(test_config=None):
     
     from . import emergency
     app.register_blueprint(emergency.bp)
+
+    from . import disasters
+    app.register_blueprint(disasters.bp)
     
     return app
