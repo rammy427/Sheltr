@@ -23,7 +23,9 @@
                         </li>
                         {% if g.user %}
                             <li class="nav-item">
-                                <span class="nav-link" href="/">{{ g.user['username'] }}</span>
+                                <a class="nav-link" href="{{ url_for('profile.view') }}">
+                                    {{ g.user.username if g.user.username else g.user['username'] }}
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
@@ -44,9 +46,16 @@
             <header>
                 {% block header %}{% endblock %}
             </header>
-            {% for message in get_flashed_messages() %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             {% block content %}{% endblock %}
         </section>
         {{ bootstrap.load_js() }}

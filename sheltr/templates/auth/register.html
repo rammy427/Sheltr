@@ -8,20 +8,42 @@
         <h2>Join Sheltr</h2>
         <form method="post" class="auth-form">
             <div class="auth-field">
-                <label for="username">Username</label>
-                <input name="username" id="username" required autofocus>
+                <label for="name">Full Name *</label>
+                <input type="text" name="name" id="name" maxlength="100" required autofocus value="{{ request.form.get('name', '') }}">
             </div>
             <div class="auth-field">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" required>
+                <label for="username">Username *</label>
+                <input type="text" name="username" id="username" required value="{{ request.form.get('username', '') }}">
             </div>
             <div class="auth-field">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" required>
+                <label for="email">Email *</label>
+                <input type="email" name="email" id="email" required value="{{ request.form.get('email', '') }}">
             </div>
             <div class="auth-field">
-                <label for="confirm_password">Confirm password</label>
+                <label for="phone">Phone Number</label>
+                <input type="tel" name="phone" id="phone" maxlength="10" pattern="[0-9]*" placeholder="10 digits" value="{{ request.form.get('phone', '') }}">
+            </div>
+            <div class="auth-field">
+                <label for="city">City</label>
+                <input type="text" name="city" id="city" maxlength="12" value="{{ request.form.get('city', '') }}">
+            </div>
+            <div class="auth-field">
+                <label for="password">Password *</label>
+                <input type="password" name="password" id="password"
+                       minlength="8" required
+                       title="Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character">
+                <small>Min 8 characters, 1 uppercase, 1 number, 1 special character</small>
+            </div>
+            <div class="auth-field">
+                <label for="confirm_password">Confirm Password *</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
+            </div>
+            <div class="auth-field">
+                <label for="role">I am a:</label>
+                <select name="role" id="role" required>
+                    <option value="volunteer" {% if request.form.get('role', 'volunteer') == 'volunteer' %}selected{% endif %}>Volunteer</option>
+                    <option value="manager" {% if request.form.get('role') == 'manager' %}selected{% endif %}>Manager</option>
+                </select>
             </div>
             <div class="auth-actions">
                 <button type="submit" class="btn-primary">Create Account</button>

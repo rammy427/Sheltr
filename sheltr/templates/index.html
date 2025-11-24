@@ -1,9 +1,36 @@
 {% extends 'base.html' %}
 
-{% block header %}
-    <h1>{% block title %}Home{% endblock %}</h1>
-{% endblock %}
+{% block header %}{% endblock %}
 
 {% block content %}
-    <h2>Welcome to Sheltr</h2>
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome to Sheltr</h1>
+        <p class="dashboard-subtitle">Hello, {{ g.user.name }}!</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <a href="{{ url_for('profile.view') }}" class="dashboard-card">
+            <h3>My Profile</h3>
+            <p>View and manage your account</p>
+        </a>
+
+        <a href="{{ url_for('emergency.view') }}" class="dashboard-card">
+            <h3>Emergencies</h3>
+            <p>View emergency information</p>
+        </a>
+
+        <a href="{{ url_for('donations.view') }}" class="dashboard-card">
+            <h3>Donations</h3>
+            <p>Manage donations and contributions</p>
+        </a>
+
+        {% if g.user.is_manager() %}
+        <div class="dashboard-card dashboard-card-manager">
+            <h3>Manager Tools</h3>
+            <p>Access manager features</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -31,7 +31,7 @@ source "$VENV_ACTIVATE"
 # Step 3: Install/upgrade dependencies
 echo "Checking dependencies..."
 pip install --quiet --upgrade pip
-pip install --quiet flask bootstrap-flask
+pip install --quiet flask bootstrap-flask PyJWT werkzeug
 
 # Step 4: Initialize database if not already done
 if [[ ! -f "$DB_INITIALIZED_FLAG" ]]; then
