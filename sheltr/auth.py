@@ -11,29 +11,39 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'].strip()
+        email = request.form['email'].strip()
         password = request.form['password']
+        confirm_password = request.form.get('confirm_password')
         db = get_db()
         error = None
 
         if not username:
             error = 'Username is required.'
+        elif not email:
+            error = 'Email is required.'
+        elif '@' not in email:
+            error = 'Please provide a valid email.'
         elif not password:
             error = 'Password is required.'
+        elif password != confirm_password:
+            error = 'Passwords must match.'
         
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password))
+                    "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
+                    (username, email, generate_password_hash(password))
                 )
                 db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             else:
+                flash('Account created! Please log in.')
                 return redirect(url_for("auth.login"))
-            
-        flash(error)
+        
+        if error:
+            flash(error)
     
     return render_template('auth/register.html')
 
@@ -59,7 +69,8 @@ def login():
             session['user_id'] = user['id']
             return redirect(url_for('index'))
     
-        flash(error)
+        if error:
+            flash(error)
 
     return render_template('auth/login.html')
 
@@ -78,6 +89,19 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+
+@bp.route('/forgot', methods=('GET', 'POST'))
+def forgot_password():
+    if request.method == 'POST':
+        identifier = request.form['identifier'].strip()
+        if not identifier:
+            flash('Please enter the username or email tied to your account.')
+        else:
+            flash('If an account exists, password reset instructions will arrive shortly.')
+            return redirect(url_for('auth.login'))
+
+    return render_template('auth/forgot_password.html')
 
 def login_required(view):
     @functools.wraps(view)

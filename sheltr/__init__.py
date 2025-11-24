@@ -1,12 +1,13 @@
 import os
 
-from flask import (Flask, render_template)
+from flask import (Flask, g, redirect, render_template, url_for)
 from flask_bootstrap import Bootstrap5
 
 def create_app(test_config=None):
     # Create and configure the app.
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
+        # !! TEMPORARY - REMOVE for final version !!
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'sheltr.sqlite'),
     )
@@ -26,17 +27,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # A simple page that says hello
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-    
     from . import db
     db.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
 
+    # Redirect to login if not authenticated, otherwise show home
+    @app.route('/')
+    def index():
+        if not hasattr(g, 'user') or g.user is None:
+            return redirect(url_for('auth.login'))
+        return render_template('index.html')
+
+    return app
     from . import donations
     app.register_blueprint(donations.bp)
     

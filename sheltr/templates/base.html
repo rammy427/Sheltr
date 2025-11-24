@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}{% endblock %} - Sheltr</title>
         {{ bootstrap.load_css() }}
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
