@@ -41,3 +41,10 @@ def create_app(test_config=None):
         return render_template('index.html')
 
     return app
+    from . import donations
+    app.register_blueprint(donations.bp)
+    
+    from . import emergency
+    app.register_blueprint(emergency.bp)
+    
+    return app
