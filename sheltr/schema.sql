@@ -5,7 +5,12 @@ CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    name TEXT NOT NULL,
+    phone TEXT,
+    city TEXT,
+    role TEXT NOT NULL DEFAULT 'volunteer',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE post (

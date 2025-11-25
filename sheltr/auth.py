@@ -1,94 +1,147 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
 )
-from werkzeug.security import check_password_hash, generate_password_hash
-from sheltr.db import get_db
+from sheltr.models import User
+from sheltr.jwt_utils import generate_token, verify_token, is_token_expiring_soon, refresh_token
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        username = request.form['username'].strip()
-        email = request.form['email'].strip()
-        password = request.form['password']
-        confirm_password = request.form.get('confirm_password')
-        db = get_db()
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        name = request.form.get('name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        city = request.form.get('city', '').strip()
+        role = request.form.get('role', 'volunteer')
+
         error = None
 
         if not username:
             error = 'Username is required.'
-        elif not email:
-            error = 'Email is required.'
-        elif '@' not in email:
-            error = 'Please provide a valid email.'
-        elif not password:
-            error = 'Password is required.'
         elif password != confirm_password:
             error = 'Passwords must match.'
-        
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
-                    (username, email, generate_password_hash(password))
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                flash('Account created! Please log in.')
+        else:
+            # Use User model to create user (includes all validation)
+            user, error = User.create(
+                username=username,
+                email=email,
+                password=password,
+                name=name,
+                phone=phone if phone else None,
+                city=city if city else None,
+                role=role
+            )
+
+            if user:
+                flash('Account created! Please log in.', 'success')
                 return redirect(url_for("auth.login"))
-        
+
         if error:
-            flash(error)
-    
+            flash(error, 'error')
+
     return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
+        username = request.form.get('username', '')
+        password = request.form.get('password', '')
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?',
-            (username,)
-        ).fetchone()
+
+        # Use User model to get user
+        user = User.get_by_username(username)
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not user.verify_password(password):
             error = 'Incorrect password.'
 
         if error is None:
+            # Generate JWT token
+            token = generate_token(user.id)
+
+            # Create response and set JWT in HTTP-only cookie
+            response = make_response(redirect(url_for('index')))
+            response.set_cookie(
+                'auth_token',
+                token,
+                httponly=True,
+                secure=False,  # Set to True in production with HTTPS
+                samesite='Strict',
+                max_age=24*60*60  # 24 hours in seconds
+            )
+
+            # Also keep session for backward compatibility
             session.clear()
-            session['user_id'] = user['id']
-            return redirect(url_for('index'))
-    
+            session['user_id'] = user.id
+
+            return response
+
         if error:
-            flash(error)
+            flash(error, 'error')
 
     return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
+    # Try to get user_id from JWT token first, then fall back to session
+    user_id = None
+
+    # Check for JWT token in cookie
+    token = request.cookies.get('auth_token')
+    if token:
+        user_id = verify_token(token)
+
+    # Fall back to session if no valid JWT
+    if user_id is None:
+        user_id = session.get('user_id')
 
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        # Use User model to get user
+        g.user = User.get_by_id(user_id)
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+
+    # Clear JWT token cookie
+    response = make_response(redirect(url_for('index')))
+    response.set_cookie('auth_token', '', expires=0)
+
+    return response
+
+
+@bp.route('/refresh', methods=('POST',))
+def refresh():
+    """Refresh JWT token if it's expiring soon."""
+    token = request.cookies.get('auth_token')
+
+    if not token:
+        return {'error': 'No token provided'}, 401
+
+    if is_token_expiring_soon(token):
+        new_token = refresh_token(token)
+        if new_token:
+            response = make_response({'message': 'Token refreshed'})
+            response.set_cookie(
+                'auth_token',
+                new_token,
+                httponly=True,
+                secure=False,  # Set to True in production with HTTPS
+                samesite='Strict',
+                max_age=24*60*60
+            )
+            return response
+
+    return {'message': 'Token still valid'}, 200
 
 
 @bp.route('/forgot', methods=('GET', 'POST'))
@@ -108,5 +161,17 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
+        return view(**kwargs)
+    return wrapped_view
+
+def manager_required(view):
+    """Decorator to require manager role for a view."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        if not g.user.is_manager():
+            flash('You must be a manager to access this page.', 'error')
+            return redirect(url_for('index'))
         return view(**kwargs)
     return wrapped_view
