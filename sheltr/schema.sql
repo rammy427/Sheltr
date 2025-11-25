@@ -1,8 +1,9 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS task;
+DROP TABLE IF EXISTS user_task;
 
 CREATE TABLE user (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -13,11 +14,18 @@ CREATE TABLE user (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE post (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author_id INTEGER NOT NULL,
-    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    title TEXT NOT NULL,
-    body TEXT NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES user (id)
+CREATE TABLE task (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50),
+    description TEXT,
+    state VARCHAR(11),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_task (
+    user_id INTEGER,
+    task_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (task_id) REFERENCES task(id),
+    PRIMARY KEY (user_id, task_id)
 );
