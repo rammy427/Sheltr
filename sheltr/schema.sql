@@ -29,3 +29,8 @@ CREATE TABLE user_task (
     FOREIGN KEY (task_id) REFERENCES task(id),
     PRIMARY KEY (user_id, task_id)
 );
+
+-- TEMPORARY INSERTIONS.
+-- INSERT INTO user (username, email, password, name, phone, city) VALUES ('TestUser', 'test@test.test', 'password', 'TestUser', '1111111111', 'City');
+INSERT INTO task (name, description, state) VALUES ('TestTask', 'This is a test task for user 1', 'pending');
+INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
