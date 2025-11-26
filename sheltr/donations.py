@@ -1,8 +1,11 @@
-from flask import (Blueprint, render_template)
+from flask import (Blueprint, g, render_template)
 from sheltr.auth import login_required
+from sheltr.models import Volunteer
 bp = Blueprint('donations', __name__, url_prefix='/donations')
 
 @bp.route('/')
 @login_required
 def view():
-    return render_template('donations.html')
+    # Get all the current tasks assigned to the user.
+    tasks = Volunteer.get_by_username(g.user.name).get_tasks()
+    return render_template('donations.html', tasks=tasks)

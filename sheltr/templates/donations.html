@@ -10,22 +10,28 @@
             <div class="col">
                 <h2>Your Tasks</h2>
                 <h3>Volunteering in:</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Emergency</th>
-                            <th scope="col">Shelter</th>
-                            <th scope="col">Task Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>María</td>
-                            <td>Shelter 9</td>
-                            <td>Hand out food and drinks.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                {% if tasks %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Task Name</th>
+                                <th scope="col">Task Description</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.name }}</td>
+                                <td>{{ task.description }}</td>
+                                <td>{{ task.state }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No assigned tasks.</p>
+                {% endif %}
             </div>
             <div class="col">
                 <h2>Your Donations</h2>
