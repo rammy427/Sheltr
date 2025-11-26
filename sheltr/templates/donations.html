@@ -13,17 +13,19 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Emergency</th>
-                            <th scope="col">Shelter</th>
+                            <th scope="col">Task Name</th>
                             <th scope="col">Task Description</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for task in tasks %}
                         <tr>
-                            <td>María</td>
-                            <td>Shelter 9</td>
-                            <td>Hand out food and drinks.</td>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.description }}</td>
+                            <td>{{ task.state }}</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

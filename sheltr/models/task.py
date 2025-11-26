@@ -11,3 +11,13 @@ class Task:
         self.name = name
         self.description = description
         self.state = state
+
+    @classmethod
+    def _from_db_row(cls, row):
+        """Create Task object from database row."""
+        return cls(
+            id = row['task_id'],
+            name = row['name'],
+            description = row['description'],
+            state = row['state']
+        )
