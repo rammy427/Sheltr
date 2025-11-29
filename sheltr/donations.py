@@ -7,5 +7,5 @@ bp = Blueprint('donations', __name__, url_prefix='/donations')
 @login_required
 def view():
     # Get all the current tasks assigned to the user.
-    tasks = Volunteer.get_by_username(g.user.name).get_tasks()
+    tasks = Volunteer.get_by_username(g.user.username).get_tasks()
     return render_template('donations.html', tasks=tasks)
