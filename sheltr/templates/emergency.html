@@ -12,22 +12,37 @@
 
     {% for e in emergency %}
 
-        <div> 
-            {{ e.emergency_name }}
+        <div class= "inner-grid-container">
 
-            <div class= "inner-grid-container">
+            <div>
+                <h1> {{ e.emergency_name }} </h1><br>
+                <h2> {{ e.emergency_date }} </h2>
 
-                <div class= "grid-item">
-                {{ e.emergency_status}}
-                </div>
+                {% if e.emergency_status == True %}
 
-                <div class= "grid-item">
-                {{ e.emergency_date}}
-                </div>
+                    <button class="button button-active">Active</button>
+
+                {% else %}
+                    <button class="button button-inactive">Inactive</button>
+
+                {% endif %}
+                
+                <p>{{ e.emergency_description }}</p>
+
+            </div>
+
+            <div style= "text-align: center" >
+                <img src = {{ e.image_url}}><br>
+
+                <button class="button button-options">Shelters</button><br>
+                <button class="button button-options">Volunteers</button><br>
+                <button class="button button-options">Donate</button><br>
+
             </div>
 
         </div>
     
     {% endfor %}
 
+</div>
 {% endblock %}
