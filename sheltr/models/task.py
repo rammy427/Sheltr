@@ -6,18 +6,18 @@ Handles all task database operations.
 from sheltr.db import get_db
 
 class Task:
-    def __init__(self, id=None, name=None, description=None, state=None):
+    def __init__(self, id=None, name=None, description=None, status=None):
         self.id = id
         self.name = name
         self.description = description
-        self.state = state
+        self.status = status
 
     @classmethod
     def _from_db_row(cls, row):
         """Create Task object from database row."""
         return cls(
             id = row['task_id'],
-            name = row['name'],
+            name = row['task_name'],
             description = row['description'],
-            state = row['state']
+            status = row['status']
         )
