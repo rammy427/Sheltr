@@ -10,8 +10,8 @@ def view():
     tasks = Volunteer.get_by_username(g.user.username).get_tasks()
 
     # Filter tasks by status if specified.
-    status = request.args.get("status")
+    status = request.args.getlist("status")
     if status:
-        tasks = [t for t in tasks if t.status == status]
+        tasks = [t for t in tasks if t.status in status]
 
-    return render_template('donations.html', tasks=tasks)
+    return render_template('donations.html', tasks=tasks, status=status)

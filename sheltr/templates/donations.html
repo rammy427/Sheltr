@@ -15,13 +15,28 @@
                         Filter by status
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('donations.view', status='pending') }}" class="dropdown-item" href="#">Pending</a></li>
-                        <li><a href="{{ url_for('donations.view', status='in_progress') }}" class="dropdown-item" href="#">In Progress</a></li>
-                        <li><a href="{{ url_for('donations.view', status='finished') }}" class="dropdown-item" href="#">Finished</a></li>
+                        <li class="dropdown-item">
+                            <label>
+                                <input type="checkbox" name="status" value="pending" onchange="updateFilters()"
+                                {% if 'pending' in status %}checked{% endif %}> Pending
+                            </label>
+                        </li>
+                        <li class="dropdown-item">
+                            <label>
+                                <input type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
+                                {% if 'in_progress' in status %}checked{% endif %}> In Progress
+                            </label>
+                        </li>
+                        <li class="dropdown-item">
+                            <label>
+                                <input type="checkbox" name="status" value="finished" onchange="updateFilters()"
+                                {% if 'finished' in status %}checked{% endif %}> Finished
+                            </label>
+                        </li>
                     </ul>
                 </div>
                 {% if tasks %}
-                    <table class="table">
+                    <table class="table my-3">
                         <thead>
                             <tr>
                                 <th scope="col">Task Name</th>
@@ -84,4 +99,13 @@
             </div>
         </div>
     </div>
+    <script>
+        function updateFilters()
+        {
+            const params = new URLSearchParams(window.location.search);
+            params.delete("status");
+            document.querySelectorAll("input[name=status]:checked").forEach(checkbox => params.append("status", checkbox.value));
+            window.location.search = params.toString();
+        }
+    </script>
 {% endblock %}
