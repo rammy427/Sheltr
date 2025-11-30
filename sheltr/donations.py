@@ -12,6 +12,6 @@ def view():
     # Filter tasks by status if specified.
     status = request.args.get("status")
     if status:
-        tasks = [t for t in tasks if t.state == status]
+        tasks = [t for t in tasks if t.status == status]
 
     return render_template('donations.html', tasks=tasks)
