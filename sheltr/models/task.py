@@ -11,7 +11,38 @@ class Task:
         self.name = name
         self.description = description
         self.status = status
-
+    
+    @staticmethod
+    def validate_status(status):
+        """Validate status (must be 'pending', 'in_progress', or 'finished')."""
+        if status not in ('pending', 'in_progress', 'finished'):
+            return False, "Invalid status."
+        return True, None
+    
+    @classmethod
+    def get_by_id(cls, task_id):
+        """Get task by ID."""
+        db = get_db()
+        row = db.execute('SELECT * FROM task WHERE task_id = ?', (task_id,)).fetchone()
+        if row is None:
+            return None
+        return cls._from_db_row(row)
+    
+    def update_status(self, status=None):
+        # Validate the status.
+        if status is not None:
+            valid, error = self.validate_status(status)
+            if not valid:
+                return False, error
+            # Update this model.
+            self.status = status
+        
+        # Update the database.
+        db = get_db()
+        db.execute("UPDATE task SET status = ? WHERE task_id = ?", (self.status, self.id))
+        db.commit()
+        return True, None
+    
     @classmethod
     def _from_db_row(cls, row):
         """Create Task object from database row."""
