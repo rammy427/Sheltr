@@ -15,21 +15,21 @@
                         Filter by status
                     </button>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-item">
-                            <label>
-                                <input type="checkbox" name="status" value="pending" onchange="updateFilters()"
+                        <li>
+                            <label class="dropdown-item form-check-label" role="button">
+                                <input class="form-check-input" type="checkbox" name="status" value="pending" onchange="updateFilters()"
                                 {% if 'pending' in status %}checked{% endif %}> Pending
                             </label>
                         </li>
-                        <li class="dropdown-item">
-                            <label>
-                                <input type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
+                        <li>
+                            <label class="dropdown-item form-check-label" role="button">
+                                <input class="form-check-input" type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
                                 {% if 'in_progress' in status %}checked{% endif %}> In Progress
                             </label>
                         </li>
-                        <li class="dropdown-item">
-                            <label>
-                                <input type="checkbox" name="status" value="finished" onchange="updateFilters()"
+                        <li>
+                            <label class="dropdown-item form-check-label" role="button">
+                                <input class="form-check-input" type="checkbox" name="status" value="finished" onchange="updateFilters()"
                                 {% if 'finished' in status %}checked{% endif %}> Finished
                             </label>
                         </li>
@@ -49,7 +49,15 @@
                             <tr>
                                 <td>{{ task.name }}</td>
                                 <td>{{ task.description }}</td>
-                                <td>{{ task.status }}</td>
+                                <td>
+                                    {% if task.status == 'pending' %}
+                                        Pending
+                                    {% elif task.status == 'in_progress' %}
+                                        In Progress
+                                    {% elif task.status == 'finished' %}
+                                        Finished
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
