@@ -50,13 +50,22 @@
                                 <td>{{ task.name }}</td>
                                 <td>{{ task.description }}</td>
                                 <td>
-                                    {% if task.status == 'pending' %}
-                                        Pending
-                                    {% elif task.status == 'in_progress' %}
-                                        In Progress
-                                    {% elif task.status == 'finished' %}
-                                        Finished
-                                    {% endif %}
+                                    <div class="dropdown">
+                                        <button id="task-status-{{ task.id }}" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            {% if task.status == 'pending' %}
+                                                Pending
+                                            {% elif task.status == 'in_progress' %}
+                                                In Progress
+                                            {% elif task.status == 'finished' %}
+                                                Finished
+                                            {% endif %}
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'pending')">Pending</a></li>
+                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'in_progress')">In Progress</a></li>
+                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'finished')">Finished</a></li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -114,6 +123,37 @@
             params.delete("status");
             document.querySelectorAll("input[name=status]:checked").forEach(checkbox => params.append("status", checkbox.value));
             window.location.search = params.toString();
+        }
+        function updateTaskStatus(task_id, new_status)
+        {
+            fetch(`/donations/update_status`,
+            {
+                method: "POST",
+                headers:
+                {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    {
+                        id: task_id,
+                        status: new_status
+                    }
+                )
+            })
+            .then(res => res.json())
+            .then(data =>
+            {
+                if (data.success)
+                {
+                    old_status = document.getElementById(`task-status-${task_id}`);
+                    if (new_status == 'pending')
+                        old_status.content = "Pending";
+                    else if (new_status == 'in_progress')
+                        old_status.content = "In Progress";
+                    else
+                        old_status.content = "Finished";
+                }
+            });
         }
     </script>
 {% endblock %}
