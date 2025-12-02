@@ -16,9 +16,10 @@ CREATE TABLE user (
 
 CREATE TABLE task (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    task_name VARCHAR(50),
-    description TEXT,
-    status VARCHAR(11),
+    task_name VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(11) NOT NULL,
+    completed_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
