@@ -50,6 +50,9 @@ def create_app(test_config=None):
             return redirect(url_for('auth.login'))
         return render_template('index.html')
 
+    from . import tasks
+    app.register_blueprint(tasks.bp)
+
     from . import donations
     app.register_blueprint(donations.bp)
 
