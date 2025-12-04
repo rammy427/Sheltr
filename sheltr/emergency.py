@@ -11,15 +11,19 @@ bp = Blueprint('emergency', __name__, url_prefix = '/emergency')
 def view():
     """ View of all the emergencies saved in the database. """
     
-    # Access the database
-    db = get_db()
-
-    list_emergencies = db.execute('SELECT * FROM emergencies').fetchall()
+    list_emergencies = Emergency.get_all()
     return render_template('emergency.html', emergency = list_emergencies)
 
-@bp.route('/<int:emergency_id>')
+
+
+@bp.route('/<int:e_id>')
 @login_required
 
-def specific_emergency(emergency_id):
+def specific_emergency(e_id):
     """ Display the specific emergency that was clicked on. """
-    print("hola")
+
+    emergency = Emergency.get_one_by_id(e_id)
+    return render_template('single_emergency.html', emergency = emergency)
+
+
+    

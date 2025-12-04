@@ -1,23 +1,20 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1 class= 'mx-auto text-center p-5'>{% block title %}Disasters{% endblock %}</h1>
+    <h1 class= 'mx-auto text-center p-5'>{% block title %}Emergency{% endblock %}</h1>
     <link rel="stylesheet" href="../static/style.css">
-
 {% endblock %}
 
 {% block content %}
     <div class="grid-container">
 
-    {% for e in emergency %}
-
-        <div class= "inner-grid-container">
+        <div class= "inner-grid-container-single">
 
             <div>
-                <h1> {{ e.emergency_name }} </h1><br>
-                <h2> {{ e.emergency_date }} </h2>
+                <h1> {{ emergency.name }} </h1><br>
+                <h2> {{ emergency.date }} </h2>
 
-                {% if e.emergency_status == True %}
+                {% if emergency.status == True %}
 
                     <button class="button button-active">Active</button>
 
@@ -26,12 +23,12 @@
 
                 {% endif %}
                 
-                <p>{{ e.emergency_description }}</p>
+                <p>{{ emergency.description }}</p>
 
             </div>
 
             <div style= "text-align: center" >
-                <img src = {{ e.image_url}}><br>
+                <img src = {{ emergency.img_url}}><br>
 
                 <button class="button button-options">Shelters</button><br>
                 <button class="button button-options">Volunteers</button><br>
@@ -40,10 +37,6 @@
             </div>
 
         </div>
-    
-    {% endfor %}
 
 </div>
-{% endblock %}
-
 {% endblock %}
