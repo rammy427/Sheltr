@@ -7,6 +7,43 @@
 {% endblock %}
 
 {% block content %}
-    <p>Active Disasters Test</p>
+    <div class="grid-container">
+
+    {% for e in emergency %}
+
+        <div class= "inner-grid-container">
+
+            <div>
+                <h1> {{ e.emergency_name }} </h1><br>
+                <h2> {{ e.emergency_date }} </h2>
+
+                {% if e.emergency_status == True %}
+
+                    <button class="button button-active">Active</button>
+
+                {% else %}
+                    <button class="button button-inactive">Inactive</button>
+
+                {% endif %}
+                
+                <p>{{ e.emergency_description }}</p>
+
+            </div>
+
+            <div style= "text-align: center" >
+                <img src = {{ e.image_url}}><br>
+
+                <button class="button button-options">Shelters</button><br>
+                <button class="button button-options">Volunteers</button><br>
+                <button class="button button-options">Donate</button><br>
+
+            </div>
+
+        </div>
+    
+    {% endfor %}
+
+</div>
+{% endblock %}
 
 {% endblock %}
