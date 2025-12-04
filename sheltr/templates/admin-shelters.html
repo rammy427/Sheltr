@@ -5,4 +5,28 @@
 {% endblock %}
 
 {% block content %}
+    <div class="container mx-auto text-center">
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for shelter in shelters %}
+                            <tr>
+                                <td>{{ shelter.name }}</td>
+                                <td>{{ shelter.location }}</td>
+                                <td>{{ shelter.description }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
