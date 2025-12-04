@@ -57,4 +57,4 @@ fi
 # Step 6: Start Flask server
 echo "Starting Sheltr on port $PORT..."
 export FLASK_APP=sheltr
-exec flask run --port "$PORT"
+exec flask run --port "$PORT" --debug
