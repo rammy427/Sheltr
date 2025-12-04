@@ -24,9 +24,7 @@
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="{{ url_for('donations.view') }}">Donations</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ url_for('disasters.view') }}">Disasters</a>
-                        </li>
+                       
                         {% if g.user %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('profile.view') }}">
