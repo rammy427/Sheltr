@@ -16,7 +16,9 @@ class Shelter:
     def get_all(cls):
         """Get all shelters."""
         db = get_db()
-        rows = db.execute("SELECT * FROM shelters")
+        rows = db.execute("SELECT * FROM shelters").fetchall()
+        if rows is None:
+            return None
         return [cls._from_db_row(row) for row in rows]
 
     @classmethod
