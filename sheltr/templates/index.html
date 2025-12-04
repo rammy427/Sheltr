@@ -31,10 +31,10 @@
         </a>
 
         {% if g.user.is_manager() %}
-        <div class="dashboard-card dashboard-card-manager">
+        <a href="{{ url_for('admin.view') }}" class="dashboard-card dashboard-card-manager">
             <h3>Manager Tools</h3>
             <p>Access manager features</p>
-        </div>
+        </a>
         {% endif %}
     </div>
 </div>
