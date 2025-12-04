@@ -14,6 +14,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Location</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,6 +23,9 @@
                                 <td>{{ shelter.name }}</td>
                                 <td>{{ shelter.location }}</td>
                                 <td>{{ shelter.description }}</td>
+                                <td>
+                                    <a class="btn btn-primary">Edit</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
