@@ -134,7 +134,7 @@ class User:
     def get_by_id(cls, user_id):
         """Get user by ID."""
         db = get_db()
-        row = db.execute('SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
+        row = db.execute('SELECT * FROM user WHERE user_id = ?', (user_id,)).fetchone()
         if row is None:
             return None
         return cls._from_db_row(row)
@@ -188,7 +188,7 @@ class User:
         # Update database
         db = get_db()
         db.execute(
-            "UPDATE user SET name = ?, phone = ?, city = ? WHERE id = ?",
+            "UPDATE user SET name = ?, phone = ?, city = ? WHERE user_id = ?",
             (self.name, self.phone, self.city, self.id)
         )
         db.commit()
@@ -212,7 +212,7 @@ class User:
         self.password = generate_password_hash(new_password)
         db = get_db()
         db.execute(
-            "UPDATE user SET password = ? WHERE id = ?",
+            "UPDATE user SET password = ? WHERE user_id = ?",
             (self.password, self.id)
         )
         db.commit()
@@ -230,7 +230,7 @@ class User:
     def _from_db_row(cls, row):
         """Create User object from database row."""
         return cls(
-            id=row['id'],
+            id=row['user_id'],
             username=row['username'],
             email=row['email'],
             password=row['password'],

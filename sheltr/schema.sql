@@ -2,9 +2,11 @@ DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS emergencies; 
 DROP TABLE IF EXISTS shelters; 
 DROP TABLE IF EXISTS shelters_of_emergency;
+DROP TABLE IF EXISTS task;
+DROP TABLE IF EXISTS user_task;
 
 CREATE TABLE user (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -43,3 +45,28 @@ CREATE TABLE shelters_of_emergency (
     FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id),
     FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id)
 );
+CREATE TABLE task (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_name VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(11) NOT NULL,
+    completed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_task (
+    user_id INTEGER,
+    task_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (task_id) REFERENCES task(id),
+    PRIMARY KEY (user_id, task_id)
+);
+
+-- TEMPORARY INSERTIONS.
+-- INSERT INTO user (username, email, password, name, phone, city) VALUES ('TestUser', 'test@test.test', 'password', 'TestUser', '1111111111', 'City');
+INSERT INTO task (task_name, description, status) VALUES ('Task 1', 'Pending task.', 'pending');
+INSERT INTO task (task_name, description, status) VALUES ('Task 2', 'Current task.', 'in_progress');
+INSERT INTO task (task_name, description, status) VALUES ('Task 3', 'Finished task.', 'finished');
+INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
+INSERT INTO user_task (user_id, task_id) VALUES (1, 2);
+INSERT INTO user_task (user_id, task_id) VALUES (1, 3);
