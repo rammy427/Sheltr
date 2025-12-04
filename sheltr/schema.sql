@@ -71,6 +71,6 @@ INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 2);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 3);
 
-INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES (Looky, Bayamon, Headquarters of Looky);
-INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES (Sheltr, San Francisco, Headquarters of Sheltr);
-INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES (Lajas, Lajas, Lajas);
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Looky', 'Bayamon', 'Headquarters of Looky');
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Sheltr', 'San Francisco', 'Headquarters of Sheltr');
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Lajas', 'Lajas', 'Lajas');
