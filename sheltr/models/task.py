@@ -28,7 +28,7 @@ class Task:
         try:
             datetime.strptime(completion_date, format_str)
             return True, None
-        except:
+        except ValueError:
             return False, "Invalid date."
     
     @classmethod
