@@ -14,7 +14,7 @@ set -euo pipefail
 
 PORT="${1:-5001}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENV_PATH="$PROJECT_ROOT/venv"
+VENV_PATH="$PROJECT_ROOT/.venv"
 VENV_ACTIVATE="$VENV_PATH/bin/activate"
 DB_INITIALIZED_FLAG="$PROJECT_ROOT/.db_initialized"
 

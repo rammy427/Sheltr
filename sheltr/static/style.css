@@ -1,5 +1,6 @@
 :root {
   --teal: #007a8c;
+  --darker_teal: #005865; 
   --charcoal: #44515c;
   --persimmon: #f25c05;
   --jungle: #1b9e77;
@@ -78,6 +79,72 @@ nav ul li a {
 
 nav ul:empty {
   display: none;
+}
+
+.grid-container {
+  display: grid;
+  width: 80%;
+  margin: auto;
+  grid-template-columns: auto;
+  background-color: #fff;
+  padding: 20px;
+}
+
+.inner-grid-container {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  grid-template-columns: 400px 400px;
+  column-gap: 80px;
+  padding: 30px;
+  margin: 10px;
+}
+
+.a-div{
+  font-family: sans-serif;
+  font-size: 15px;
+  color: #fff;
+  background-color: var(--teal);
+  border: 5px solid var(--charcoal);
+  padding: 10px;
+  margin: 10px;
+}
+
+.a-div:hover{
+  background-color: var(--darker_teal);
+  text-decoration: none;
+}
+
+.button{
+  border: 3px solid var(--charcoal);
+  border-radius: 4px;
+  color: var(--charcoal);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
+  text-align: center;
+  font-size: 15px;
+  width: 150px;
+  cursor: pointer;
+}
+
+.button-active {background-color: var(--jungle); }
+.button-inactive {background-color: var(--persimmon); } 
+.button-options {background-color: var(--sand); }
+
+.button-options:hover {
+  background-color: var(--teal); 
+  color: var(--sand); 
+  border: 3px solid var(--sand);
+  transition-duration: 0.2s;
+}
+
+img{
+  max-width: 100%;
+  max-height: auto;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
 }
 
 .content {
