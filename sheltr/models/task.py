@@ -27,9 +27,11 @@ class Task:
     
     @staticmethod
     def validate_description(description):
-        """Validate description (required)."""
+        """Validate description (required, max 1000 characters)."""
         if not description or not description.strip():
             return False, "Description is required."
+        if len(description) > 1000:
+            return False, "Description must be at most 1000 characters."
         return True, None
     
     @staticmethod
