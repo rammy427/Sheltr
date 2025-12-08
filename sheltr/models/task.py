@@ -120,17 +120,7 @@ class Task:
             "UPDATE task SET task_name = ?, description = ? WHERE task_id = ?",
             (self.name, self.description, self.id)
         )
-        # Update assigned volunteer.
-        if volunteer_id != "-1":
-            db.execute(
-                "REPLACE INTO user_task (user_id, task_id) VALUES (?, ?)",
-                (self.volunteer.id, self.id)
-            )
-        else:
-            db.execute(
-                "DELETE FROM user_task WHERE task_id = ?",
-                (self.id,)
-            )
+        self.set_volunteer(db, volunteer_id)
 
         db.commit()
         return True, None
@@ -158,6 +148,19 @@ class Task:
             db.execute("UPDATE task SET status = ? WHERE task_id = ?", (self.status, self.id))
         db.commit()
         return True, None
+    
+    def set_volunteer(self, db, volunteer_id):
+        # Update assigned volunteer.
+        if volunteer_id != "-1":
+            db.execute(
+                "REPLACE INTO user_task (user_id, task_id) VALUES (?, ?)",
+                (self.volunteer.id, self.id)
+            )
+        else:
+            db.execute(
+                "DELETE FROM user_task WHERE task_id = ?",
+                (self.id,)
+            )
     
     @classmethod
     def _from_db_row(cls, row):
