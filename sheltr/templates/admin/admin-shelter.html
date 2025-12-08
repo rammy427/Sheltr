@@ -51,7 +51,13 @@
                     <tr>
                         <td>{{ task.name }}</td>
                         <td>{{ task.description }}</td>
-                        <td>{{ task.get_volunteer().name }}</td>
+                        <td>
+                            {% if task.get_volunteer() %}
+                                {{ task.get_volunteer().name }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="dropdown">
                                 <button id="task-status-{{ task.id }}" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

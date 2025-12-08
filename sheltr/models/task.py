@@ -52,6 +52,10 @@ class Task:
     def validate_volunteer(volunteer_id):
         """Validate volunteer (check if the user exists)."""
         from .volunteer import Volunteer
+        # If volunteer ID is -1, remove volunteer.
+        if volunteer_id == "-1":
+            return True, None
+        
         volunteer = Volunteer.get_by_id(volunteer_id)
         if volunteer is None:
             return False, "User not found."
@@ -76,7 +80,8 @@ class Task:
                             WHERE user.user_id = user_task.user_id
                             AND task.task_id = user_task.task_id
                             AND task.task_id = ?''', (self.id,)).fetchone()
-            self.volunteer = Volunteer._from_db_row(row)
+            if row is not None:
+                self.volunteer = Volunteer._from_db_row(row)
         return self.volunteer
     
     def update(self, name=None, description=None, volunteer_id=None):
@@ -102,7 +107,10 @@ class Task:
             valid, error = self.validate_volunteer(volunteer_id)
             if not valid:
                 return False, error
-            self.volunteer = Volunteer.get_by_id(volunteer_id)
+            if volunteer_id == "-1":
+                self.volunteer = None
+            else:
+                self.volunteer = Volunteer.get_by_id(volunteer_id)
         
         # Update task information in database.
         db = get_db()
@@ -111,10 +119,16 @@ class Task:
             (self.name, self.description, self.id)
         )
         # Update assigned volunteer.
-        db.execute(
-            "UPDATE user_task SET user_id = ? WHERE task_id = ?",
-            (self.volunteer.id, self.id)
-        )
+        if volunteer_id != "-1":
+            db.execute(
+                "REPLACE INTO user_task (user_id, task_id) VALUES (?, ?)",
+                (self.volunteer.id, self.id)
+            )
+        else:
+            db.execute(
+                "DELETE FROM user_task WHERE task_id = ?",
+                (self.id,)
+            )
 
         db.commit()
         return True, None

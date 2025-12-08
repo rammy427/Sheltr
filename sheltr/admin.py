@@ -42,7 +42,6 @@ def task(shelter_id, task_id):
         name = request.form.get('name', '').strip()
         description = request.form.get('description', '').strip()
         volunteer = request.form.get('volunteer', '').strip()
-        print(volunteer)
 
         # Update task using model method.
         success, error = task.update(name=name, description=description, volunteer_id=volunteer)

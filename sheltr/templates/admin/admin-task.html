@@ -28,6 +28,7 @@
                 <div class="mb-3">
                     <label for="volunteer" class="form-label">Assigned Volunteer</label>
                     <select class="form-select" name="volunteer" id="volunteer">
+                        <option value="-1">None</option>
                         {% for volunteer in volunteers %}
                             <option value="{{ volunteer.id }}">{{ volunteer.name }}</option>
                         {% endfor %}
