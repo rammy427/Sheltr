@@ -11,7 +11,7 @@ def view():
     """View the 10 most recent donations"""
     db = get_db()
 
-    donation_list = db.execute('SELECT  FROM donation ORDER BY donation_date DESC LIMIT 10').fetchall()
+    donation_list = db.execute('SELECT * FROM donation ORDER BY donation_date DESC LIMIT 10').fetchall()
 
     return render_template('donations/donations.html', donations = donation_list)
 

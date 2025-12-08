@@ -1,51 +1,48 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1 class="mx-auto text-center">{% block title %}Donations{% endblock %}</h1>
+    <div class="container py-3">
+        <h1 class="text-center mb-0">{% block title %}Donations{% endblock %}</h1>
+    </div>
 {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto text-center">
-        <div class="row">
-            <div class="col">
-                <h2>Your Donations</h2>
-                <table class="table">
-                    <thead>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-center mb-0">Recent Donations</h2>
+        </div>
+
+        {% if donations %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
+                            <th scope="col">ID</th>
                             <th scope="col">Emergency</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">User</th>
                             <th scope="col">Date</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Message</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>María</td>
-                            <td>$100</td>
-                            <td>Sep. 20, 2017</td>
-                        </tr>
-                        <tr>
-                            <td>María</td>
-                            <td>$20</td>
-                            <td>Sep. 23, 2017</td>
-                        </tr>
-                        <tr>
-                            <td>María</td>
-                            <td>$50</td>
-                            <td>Sep. 23, 2017</td>
-                        </tr>
-                        <tr>
-                            <td>Irma</td>
-                            <td>$100</td>
-                            <td>Sep. 7, 2017</td>
-                        </tr>
-                        <tr>
-                            <td>Irma</td>
-                            <td>$50</td>
-                            <td>Sep. 7, 2017</td>
-                        </tr>
+                        {% for donation in donations %}
+                            <tr>
+                                <td>{{ donation['donation_id']}}</td>
+                                <td>{{ donation['emergency_id']}}</td>
+                                <td>{{ donation['user_id']}}</td>
+                                <td>{{ donation['donation_date'].strftime('%Y-%m-%d %H:%M')}}</td>
+                                <td>{{ donation['donation_quantity']}}</td>
+                                <td>{{ donation['donation_message']}}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
+        {% else %}
+            <div class="alert alert-info mb-0" role="alert">
+                No donations found.
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
