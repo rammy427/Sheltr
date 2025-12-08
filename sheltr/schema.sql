@@ -58,7 +58,7 @@ CREATE TABLE task (
 
 CREATE TABLE user_task (
     user_id INTEGER,
-    task_id INTEGER,
+    task_id INTEGER UNIQUE,
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (task_id) REFERENCES task(id),
     PRIMARY KEY (user_id, task_id)
