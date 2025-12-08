@@ -61,5 +61,11 @@ def create_app(test_config=None):
 
     from . import profile
     app.register_blueprint(profile.bp)
+
+    from . import disasters
+    app.register_blueprint(disasters.bp)
+
+    from . import admin
+    app.register_blueprint(admin.bp)
     
     return app

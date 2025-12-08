@@ -7,8 +7,7 @@ from .user import User
 from .volunteer import Volunteer
 from .manager import Manager
 from .emergency import Emergency
-
-__all__ = ['User', 'Volunteer', 'Manager', 'Emergency']
 from .task import Task
+from .shelter import Shelter
 
-__all__ = ['User', 'Volunteer', 'Manager', 'Task']
+__all__ = ['User', 'Volunteer', 'Manager', 'Emergency', 'Task', 'Shelter']

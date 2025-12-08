@@ -1,5 +1,5 @@
 from flask import (Blueprint, g, render_template, request, jsonify)
-from sheltr.auth import login_required
+from sheltr.auth import login_required, manager_required
 from sheltr.models import Volunteer, Task
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 
@@ -29,3 +29,11 @@ def update_status():
     
     task.update_status(new_status)
     return jsonify(success=True)
+
+@bp.route('/<int:task_id>/delete', methods=["DELETE"])
+@manager_required
+def delete_task(task_id):
+    task = Task.get_by_id(task_id)
+    if task:
+        task.delete()
+    return '', 204
