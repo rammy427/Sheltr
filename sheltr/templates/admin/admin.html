@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <title>Manager Tools</title>
+{% endblock %}
+
+{% block content %}
+    <div class="dashboard-wrapper">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Manager Tools</h1>
+        </div>
+        <div class="dashboard-grid">
+            <a href="{{ url_for('admin.shelters') }}" class="dashboard-card">
+                <h3>Shelters</h3>
+                <p>Add, edit, and delete shelters and their tasks</p>
+            </a>
+        </div>
+    </div>
+{% endblock %}
