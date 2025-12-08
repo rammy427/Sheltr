@@ -5,7 +5,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: sheltr-app
+    container_name: Sheltr
     ports:
       - "5001:5000"
     environment:
@@ -28,7 +28,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: sheltr-dev
+    container_name: Sheltr-dev
     ports:
       - "5001:5000"
     environment:

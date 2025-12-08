@@ -99,7 +99,11 @@ def docker_stop():
         return
 
     print("Stopping Sheltr containers...")
-    cmd = compose_cmd.split() + ["-f", os.path.join(DOCKER_DIR, "docker-compose.yml"), "down"]
+    cmd = compose_cmd.split() + [
+        "-f", os.path.join(DOCKER_DIR, "docker-compose.yml"),
+        "--profile", "dev",
+        "down"
+    ]
     subprocess.run(cmd, cwd=PROJECT_ROOT)
     print("Containers stopped.")
 
@@ -112,7 +116,11 @@ def docker_reset():
         return
 
     print("Resetting Sheltr (removing volumes and rebuilding)...")
-    cmd = compose_cmd.split() + ["-f", os.path.join(DOCKER_DIR, "docker-compose.yml"), "down", "-v"]
+    cmd = compose_cmd.split() + [
+        "-f", os.path.join(DOCKER_DIR, "docker-compose.yml"),
+        "--profile", "dev",
+        "down", "-v"
+    ]
     subprocess.run(cmd, cwd=PROJECT_ROOT)
     print("Volumes removed. Restarting...")
     docker_start()
@@ -135,7 +143,7 @@ def container_running():
     """Check if any Sheltr container is already running."""
     try:
         # Check for both prod and dev containers
-        for container in ["sheltr-app", "sheltr-dev"]:
+        for container in ["Sheltr", "Sheltr-dev"]:
             result = subprocess.run(
                 ["docker", "ps", "-q", "-f", f"name={container}"],
                 capture_output=True,
