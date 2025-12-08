@@ -129,19 +129,6 @@ class Emergency:
         if rows is None:
             return None
         return [self._from_db_row(row) for row in rows]
-
-
-    @classmethod
-    def assigned_shelters(self, e_id):
-
-        """Get all of the shelters for an emergency."""
-
-        db = get_db()
-        rows = db.execute('SELECT * FROM shelters_of_emergencies WHERE emergency_id = ?', (e_id)).fetchall()
-
-        if rows is None:
-            return None
-        return [self._from_db_row(row) for row in rows]
     
 
     def to_dict(self):
