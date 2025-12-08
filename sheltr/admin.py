@@ -13,3 +13,10 @@ def view():
 def shelters():
     shelters = Shelter.get_all()
     return render_template('admin/admin-shelters.html', shelters=shelters)
+
+@bp.route('/shelters/<int:shelter_id>')
+@manager_required
+def shelter(shelter_id):
+    shelter = Shelter.get_by_id(shelter_id)
+    tasks = shelter.get_tasks()
+    return render_template('admin/admin-shelter.html', shelter=shelter, tasks=tasks)
