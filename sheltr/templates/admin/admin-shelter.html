@@ -10,6 +10,31 @@
         <p>{{ shelter.description }}</p>
         <p>Location: {{ shelter.location }}</p>
         <h2>Tasks for this shelter:</h2>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter by status
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <label class="dropdown-item form-check-label" role="button">
+                        <input class="form-check-input" type="checkbox" name="status" value="pending" onchange="updateFilters()"
+                        {% if 'pending' in status %}checked{% endif %}> Pending
+                    </label>
+                </li>
+                <li>
+                    <label class="dropdown-item form-check-label" role="button">
+                        <input class="form-check-input" type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
+                        {% if 'in_progress' in status %}checked{% endif %}> In Progress
+                    </label>
+                </li>
+                <li>
+                    <label class="dropdown-item form-check-label" role="button">
+                        <input class="form-check-input" type="checkbox" name="status" value="finished" onchange="updateFilters()"
+                        {% if 'finished' in status %}checked{% endif %}> Finished
+                    </label>
+                </li>
+            </ul>
+        </div>
         {% if tasks %}
             <table class="table my-3">
                 <thead>
