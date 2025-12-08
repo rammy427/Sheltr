@@ -18,6 +18,13 @@ docker compose --profile dev up sheltr-dev
 ```
 The dev server will be available at `http://localhost:5001`
 
+### Running Tests
+```bash
+cd docker
+docker compose --profile test run --rm sheltr-test
+```
+This runs the full test suite with coverage report inside a Docker container.
+
 ## Files Overview
 
 | File | Purpose |

@@ -44,6 +44,23 @@ services:
     profiles:
       - dev
 
+  # Test service for running tests in Docker
+  sheltr-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: Sheltr-test
+    environment:
+      - FLASK_APP=sheltr
+      - SECRET_KEY=test-secret-key
+    volumes:
+      # Mount source code and tests for live updates
+      - ../sheltr:/app/sheltr:ro
+      - ../tests:/app/tests:ro
+    command: ["pytest", "tests/", "--cov=sheltr", "--cov-report=term-missing", "-v"]
+    profiles:
+      - test
+
 volumes:
   sheltr-data:
     name: sheltr-data

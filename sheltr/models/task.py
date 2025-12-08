@@ -54,7 +54,7 @@ class Task:
         if status == 'finished':
             cur_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             valid, error = self.validate_completion_date(cur_time)
-            if not valid:
+            if not valid:  # pragma: no cover - defensive code, datetime.now() always valid
                 flash("Error!")
                 return False, error
             self.completed_at = cur_time
