@@ -72,7 +72,7 @@ class Task:
             valid, error = self.validate_description(description)
             if not valid:
                 return False, error
-            self.phone = description.strip()
+            self.description = description.strip()
         
         # Update database
         db = get_db()
