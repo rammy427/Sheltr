@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  sheltr:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: Sheltr
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_APP=sheltr
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+    volumes:
+      # Persist SQLite database across container restarts
+      - sheltr-data:/app/instance
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot reload
+  sheltr-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: Sheltr-dev
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_APP=sheltr
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - SECRET_KEY=dev-secret-key-not-for-production
+    volumes:
+      # Mount source code for hot reload
+      - ../sheltr:/app/sheltr:ro
+      - sheltr-dev-data:/app/instance
+    command: ["flask", "run", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+    profiles:
+      - dev
+
+volumes:
+  sheltr-data:
+    name: sheltr-data
+  sheltr-dev-data:
+    name: sheltr-dev-data
