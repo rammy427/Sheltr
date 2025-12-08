@@ -51,6 +51,15 @@ class Task:
             return False, "Invalid date."
         
     @staticmethod
+    def validate_shelter(shelter_id):
+        """Validate shelter (check if the shelter exists)."""
+        from .shelter import Shelter
+        shelter = Shelter.get_by_id(shelter_id)
+        if shelter is None:
+            return False, "Shelter not found."
+        return True, None
+        
+    @staticmethod
     def validate_volunteer(volunteer_id):
         """Validate volunteer (check if the user exists)."""
         from .volunteer import Volunteer
@@ -85,6 +94,54 @@ class Task:
             if row is not None:
                 self.volunteer = Volunteer._from_db_row(row)
         return self.volunteer
+    
+    @classmethod
+    def create(cls, name=None, description=None, status='pending', volunteer_id='-1', shelter_id=None):
+        """
+        Create a new task in the database.
+        If given, associate volunteer and shelter.
+        Returns (task_object, error_message)
+        """
+        # Validate all fields.
+        valid, error = cls.validate_name(name)
+        if not valid:
+            return None, error
+        
+        valid, error = cls.validate_description(description)
+        if not valid:
+            return None, error
+        
+        valid, error = cls.validate_status(status)
+        if not valid:
+            return None, error
+        
+        valid, error = cls.validate_shelter(shelter_id)
+        if not valid:
+            return None, error
+        
+        valid, error = cls.validate_volunteer(volunteer_id)
+        if not valid:
+            return None, error
+        
+        # Insert into database.
+        db = get_db()
+        # try:
+        cursor = db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            (name.strip(), description.strip(), status, shelter_id)
+        )
+        db.commit()
+
+        task = cls.get_by_id(cursor.lastrowid)
+        # Set the associated shelter.
+        task.set_shelter(db, shelter_id)
+        # Assign volunteer.
+        task.set_volunteer(db, volunteer_id)
+
+        # Return created shelter.
+        return task, None
+        # except:
+        #     return None, "Failed to create task."
     
     def update(self, name=None, description=None, volunteer_id=None):
         """
@@ -149,18 +206,24 @@ class Task:
         db.commit()
         return True, None
     
+    def set_shelter(self, db, shelter_id):
+        # Update assigned shelter.
+        db.execute("UPDATE task SET shelter_id = ? WHERE task_id = ?", (shelter_id, self.id))
+        db.commit()
+    
     def set_volunteer(self, db, volunteer_id):
         # Update assigned volunteer.
         if volunteer_id != "-1":
             db.execute(
                 "REPLACE INTO user_task (user_id, task_id) VALUES (?, ?)",
-                (self.volunteer.id, self.id)
+                (volunteer_id, self.id)
             )
         else:
             db.execute(
                 "DELETE FROM user_task WHERE task_id = ?",
                 (self.id,)
             )
+        db.commit()
     
     @classmethod
     def _from_db_row(cls, row):

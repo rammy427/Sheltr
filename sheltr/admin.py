@@ -45,6 +45,7 @@ def task(shelter_id, task_id):
 
         # Update task using model method.
         success, error = task.update(name=name, description=description, volunteer_id=volunteer)
+
         if success:
             flash('Task updated successfully!', 'success')
             return redirect(url_for('admin.shelter', shelter_id=shelter_id))
@@ -52,3 +53,26 @@ def task(shelter_id, task_id):
             flash(error, 'error')
 
     return render_template('admin/admin-task.html', shelter_id=shelter_id, task=task, volunteers=volunteers)
+
+@bp.route('/shelters/<int:shelter_id>/add', methods=('GET', 'POST'))
+@manager_required
+def add_task(shelter_id):
+    # Get all available volunteers.
+    volunteers = Volunteer.get_all()
+
+     # If POST request, or form was submitted, add the new task.
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+        volunteer = request.form.get('volunteer', '').strip()
+
+        # Create task using model method.
+        success, error = Task.create(name=name, description=description, volunteer_id=volunteer, shelter_id=shelter_id)
+
+        if success:
+            flash('Task created successfully!', 'success')
+            return redirect(url_for('admin.shelter', shelter_id=shelter_id))
+        else:
+            flash(error, 'error')
+
+    return render_template('admin/admin-task.html', shelter_id=shelter_id, volunteers=volunteers)

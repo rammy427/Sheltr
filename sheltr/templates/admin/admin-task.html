@@ -8,21 +8,25 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h3>Edit Information for Task {{ task.id }}</h3>
+            {% if task %}
+                <h3>Edit Information for Task {{ task.id }}</h3>
+            {% else %}
+                <h3>Add Task</h3>
+            {% endif %}
         </div>
         <div class="card-body">
             <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name *</label>
                     <input type="text" class="form-control" id="name" name="name"
-                           value="{{ task.name }}" maxlength="50" required>
+                           value="{{ task.name if task else test }}" maxlength="50" required>
                     <div class="form-text">Maximum 50 characters</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Description *</label>
                     <textarea class="form-control" name="description" id="description"
-                              rows="4" maxlength="1000" required>{{ task.description }}</textarea>
+                              rows="4" maxlength="1000" required>{{ task.description if task else None }}</textarea>
                     <div class="form-text">Maximum 1000 characters</div>
                 </div>
                 
