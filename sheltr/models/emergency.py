@@ -36,8 +36,8 @@ class Emergency:
             db.commit()
 
         except db.OperationalError:
-            print("An error has occured within the database. Please try again.")
-            
+            print("An error has occured creating a new emergency. Please try again.")   
+
 
     @classmethod
     def _from_db_row(self, row):
@@ -73,9 +73,23 @@ class Emergency:
         # Update emergency in the database
         db = get_db()
 
-        db.execute("UPDATE emergencies SET name = ?, date = ?, img_url = ? WHERE id = ?", 
-            (self.name, self.date, self.img_url, self.id))
+        db.execute("UPDATE emergencies SET name = ?, date = ?, img_url = ?, description = ? WHERE id = ?", 
+            (self.name, self.date, self.img_url, self.description, self.id))
         
+        db.commit()
+
+    
+    @classmethod
+    def remove_em(self, e_id):
+
+        """
+        Lets the manager remove emergencies.
+        """
+
+        # Remove an emergency from the database
+        db = get_db()
+
+        db.execute('DELETE * FROM emergencies WHERE emergency_id = ?', (e_id))
         db.commit()
 
 
@@ -99,6 +113,18 @@ class Emergency:
 
         db = get_db()
         rows = db.execute('SELECT * FROM emergencies').fetchall()
+
+        if rows is None:
+            return None
+        return [self._from_db_row(row) for row in rows]
+    
+    @classmethod
+    def get_all_by_status(self, status):
+
+        """Get all of the emergencies with a specific status."""
+
+        db = get_db()
+        rows = db.execute('SELECT * FROM emergencies WHERE emergency_status = ?', (status)).fetchall()
 
         if rows is None:
             return None
