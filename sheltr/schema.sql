@@ -65,7 +65,9 @@ CREATE TABLE user_task (
 );
 
 -- TEMPORARY INSERTIONS.
--- INSERT INTO user (username, email, password, name, phone, city) VALUES ('TestUser', 'test@test.test', 'password', 'TestUser', '1111111111', 'City');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol1', 'volunteer1@e.mail', 'password', 'Volunteer 1', '1111111111', 'City');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol2', 'volunteer2@e.mail', 'password', 'Volunteer 2', '1111111111', 'City');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol3', 'volunteer3@e.mail', 'password', 'Volunteer 3', '1111111111', 'City');
 INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 1', 'Pending task for shelter 1.', 'pending', 1);
 INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 2', 'Current task for shelter 2.', 'in_progress', 2);
 INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 3', 'Finished task for shelter 3.', 'finished', 3);
@@ -74,10 +76,10 @@ INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 5', 
 INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 6', 'Finished task for shelter 3.', 'finished', 3);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 2);
-INSERT INTO user_task (user_id, task_id) VALUES (1, 3);
-INSERT INTO user_task (user_id, task_id) VALUES (1, 4);
-INSERT INTO user_task (user_id, task_id) VALUES (1, 5);
-INSERT INTO user_task (user_id, task_id) VALUES (1, 6);
+INSERT INTO user_task (user_id, task_id) VALUES (2, 3);
+INSERT INTO user_task (user_id, task_id) VALUES (2, 4);
+INSERT INTO user_task (user_id, task_id) VALUES (3, 5);
+INSERT INTO user_task (user_id, task_id) VALUES (3, 6);
 
 INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Looky', 'Bayamon', 'Headquarters of Looky');
 INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Sheltr', 'San Francisco', 'Headquarters of Sheltr');
