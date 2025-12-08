@@ -48,10 +48,12 @@ CREATE TABLE shelters_of_emergency (
 CREATE TABLE task (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
     task_name VARCHAR(50) NOT NULL,
+    shelter_id INTEGER,
     description TEXT NOT NULL,
     status VARCHAR(11) NOT NULL,
     completed_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id)
 );
 
 CREATE TABLE user_task (
@@ -64,12 +66,18 @@ CREATE TABLE user_task (
 
 -- TEMPORARY INSERTIONS.
 -- INSERT INTO user (username, email, password, name, phone, city) VALUES ('TestUser', 'test@test.test', 'password', 'TestUser', '1111111111', 'City');
-INSERT INTO task (task_name, description, status) VALUES ('Task 1', 'Pending task.', 'pending');
-INSERT INTO task (task_name, description, status) VALUES ('Task 2', 'Current task.', 'in_progress');
-INSERT INTO task (task_name, description, status) VALUES ('Task 3', 'Finished task.', 'finished');
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 1', 'Pending task for shelter 1.', 'pending', 1);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 2', 'Current task for shelter 2.', 'in_progress', 2);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 3', 'Finished task for shelter 3.', 'finished', 3);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 4', 'Pending task for shelter 1.', 'pending', 1);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 5', 'Current task for shelter 2.', 'in_progress', 2);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 6', 'Finished task for shelter 3.', 'finished', 3);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 2);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 3);
+INSERT INTO user_task (user_id, task_id) VALUES (1, 4);
+INSERT INTO user_task (user_id, task_id) VALUES (1, 5);
+INSERT INTO user_task (user_id, task_id) VALUES (1, 6);
 
 INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Looky', 'Bayamon', 'Headquarters of Looky');
 INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Sheltr', 'San Francisco', 'Headquarters of Sheltr');
