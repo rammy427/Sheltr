@@ -14,6 +14,22 @@ class Task:
         self.description = description
         self.status = status
         self.completed_at = completed_at
+
+    @staticmethod
+    def validate_name(name):
+        """Validate name (required, max 50 characters)."""
+        if not name or not name.strip():
+            return False, "Name is required."
+        if len(name) > 50:
+            return False, "Name must be at most 50 characters."
+        return True, None
+    
+    @staticmethod
+    def validate_description(description):
+        """Validate description (required)."""
+        if not description or not description.strip():
+            return False, "Description is required."
+        return True, None
     
     @staticmethod
     def validate_status(status):
@@ -39,6 +55,33 @@ class Task:
         if row is None:
             return None
         return cls._from_db_row(row)
+    
+    def update(self, name=None, description=None):
+        """
+        Update task fields.
+        Returns (success, error_message).
+        """
+        # Validate fields
+        if name is not None:
+            valid, error = self.validate_name(name)
+            if not valid:
+                return False, error
+            self.name = name.strip()
+
+        if description is not None:
+            valid, error = self.validate_description(description)
+            if not valid:
+                return False, error
+            self.phone = description.strip()
+        
+        # Update database
+        db = get_db()
+        db.execute(
+            "UPDATE task SET task_name = ?, description = ? WHERE task_id = ?",
+            (self.name, self.description, self.id)
+        )
+        db.commit()
+        return True, None
     
     def update_status(self, status=None):
         # Validate the status.
