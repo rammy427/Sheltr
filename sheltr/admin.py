@@ -44,8 +44,8 @@ def task(shelter_id, task_id):
         volunteer = request.form.get('volunteer', '').strip()
         print(volunteer)
 
-        # Update task using model method
-        success, error = task.update(name=name, description=description)
+        # Update task using model method.
+        success, error = task.update(name=name, description=description, volunteer_id=volunteer)
         if success:
             flash('Task updated successfully!', 'success')
             return redirect(url_for('admin.shelter', shelter_id=shelter_id))

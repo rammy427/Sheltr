@@ -47,7 +47,16 @@ class Task:
             return True, None
         except:
             return False, "Invalid date."
-    
+        
+    @staticmethod
+    def validate_volunteer(volunteer_id):
+        """Validate volunteer (check if the user exists)."""
+        from .volunteer import Volunteer
+        volunteer = Volunteer.get_by_id(volunteer_id)
+        if volunteer is None:
+            return False, "User not found."
+        return True, None
+        
     @classmethod
     def get_by_id(cls, task_id):
         """Get task by ID."""
@@ -70,12 +79,13 @@ class Task:
             self.volunteer = Volunteer._from_db_row(row)
         return self.volunteer
     
-    def update(self, name=None, description=None):
+    def update(self, name=None, description=None, volunteer_id=None):
         """
         Update task fields.
         Returns (success, error_message).
         """
-        # Validate fields
+        from .volunteer import Volunteer
+        # Validate fields.
         if name is not None:
             valid, error = self.validate_name(name)
             if not valid:
@@ -88,12 +98,24 @@ class Task:
                 return False, error
             self.description = description.strip()
         
-        # Update database
+        if volunteer_id is not None:
+            valid, error = self.validate_volunteer(volunteer_id)
+            if not valid:
+                return False, error
+            self.volunteer = Volunteer.get_by_id(volunteer_id)
+        
+        # Update task information in database.
         db = get_db()
         db.execute(
             "UPDATE task SET task_name = ?, description = ? WHERE task_id = ?",
             (self.name, self.description, self.id)
         )
+        # Update assigned volunteer.
+        db.execute(
+            "UPDATE user_task SET user_id = ? WHERE task_id = ?",
+            (self.volunteer.id, self.id)
+        )
+
         db.commit()
         return True, None
     
