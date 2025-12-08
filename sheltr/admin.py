@@ -6,10 +6,10 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.route('/')
 @manager_required
 def view():
-    return render_template('admin.html')
+    return render_template('admin/admin.html')
 
 @bp.route('/shelters')
 @manager_required
 def shelters():
     shelters = Shelter.get_all()
-    return render_template('admin-shelters.html', shelters=shelters)
+    return render_template('admin/admin-shelters.html', shelters=shelters)
