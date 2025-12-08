@@ -1,6 +1,6 @@
 from flask import (Blueprint, g, render_template, request, flash, redirect, url_for)
 from sheltr.auth import manager_required
-from sheltr.models import Shelter, Task
+from sheltr.models import Shelter, Task, Volunteer
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/')
@@ -34,11 +34,15 @@ def shelter(shelter_id):
 def task(shelter_id, task_id):
     # Get all information for the task selected.
     task = Task.get_by_id(task_id)
+    # Get all available volunteers.
+    volunteers = Volunteer.get_all()
 
     # If POST request, or form was submitted, update the task.
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         description = request.form.get('description', '').strip()
+        volunteer = request.form.get('volunteer', '').strip()
+        print(volunteer)
 
         # Update task using model method
         success, error = task.update(name=name, description=description)
@@ -48,4 +52,4 @@ def task(shelter_id, task_id):
         else:
             flash(error, 'error')
 
-    return render_template('admin/admin-task.html', shelter_id=shelter_id, task=task)
+    return render_template('admin/admin-task.html', shelter_id=shelter_id, task=task, volunteers=volunteers)

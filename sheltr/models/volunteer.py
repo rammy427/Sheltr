@@ -21,6 +21,15 @@ class Volunteer(User):
         return super().create(username, email, password, name, phone, city, role='volunteer')
 
     # Volunteer-specific methods.
+    @classmethod
+    def get_all(cls):
+        """Get all volunteers."""
+        db = get_db()
+        rows = db.execute("SELECT * FROM user WHERE role = 'volunteer'").fetchall()
+        if rows is None:
+            return None
+        return [cls._from_db_row(row) for row in rows]
+
     def get_tasks(self):
         """Get all tasks that are assigned to a volunteer."""
         if not self.tasks:
