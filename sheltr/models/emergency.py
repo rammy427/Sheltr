@@ -20,7 +20,7 @@ class Emergency:
 
 
     @classmethod
-    def new_emergency(cls, name, status, date, img_url = None, description = None):
+    def new_emergency(self, name, status, date, img_url = None, description = None):
 
         """ This function adds an emergency to the database. 
         It is a void function. 
@@ -36,9 +36,22 @@ class Emergency:
             db.commit()
 
         except db.OperationalError:
-            print("An error has occured within the database. Please try again.")
-            
+            print("An error has occured creating a new emergency. Please try again.")   
 
+
+    @classmethod
+    def _from_db_row(self, row):
+
+        """Create emergency object from database row."""
+
+        return self(
+            id = row['emergency_id'],
+            name = row['emergency_name'],
+            status = row['emergency_status'],
+            date = row['emergency_date'],
+            img_url = row['image_url'],
+            description = row['emergency_description'])
+    
 
     @classmethod
     def edit_em(self, name = None, date = None, img_url = None, description = None):
@@ -57,17 +70,82 @@ class Emergency:
         if img_url is not None:
             self.img_url = img_url
 
-
         # Update emergency in the database
         db = get_db()
 
-        db.execute("UPDATE emergencies SET name = ?, date = ?, img_url = ? WHERE id = ?", 
-            (self.name, self.date, self.img_url, self.id))
+        db.execute("UPDATE emergencies SET name = ?, date = ?, img_url = ?, description = ? WHERE id = ?", 
+            (self.name, self.date, self.img_url, self.description, self.id))
         
         db.commit()
 
     
+    @classmethod
+    def remove_em(self, e_id):
+
+        """
+        Lets the manager remove emergencies.
+        """
+
+        # Remove an emergency from the database
+        db = get_db()
+
+        db.execute('DELETE * FROM emergencies WHERE emergency_id = ?', (e_id))
+        db.commit()
+
+
+    @classmethod
+    def get_one_by_id(self, e_id):
+
+        """Get emergency by ID."""
+
+        db = get_db()
+        row = db.execute('SELECT * FROM emergencies WHERE emergency_id = ?', (e_id,)).fetchone()
+
+        if row is None:
+            return None
+        return self._from_db_row(row)
+    
+
+    @classmethod
+    def get_all(self):
+
+        """Get all of the emergencies."""
+
+        db = get_db()
+        rows = db.execute('SELECT * FROM emergencies').fetchall()
+
+        if rows is None:
+            return None
+        return [self._from_db_row(row) for row in rows]
+    
+    @classmethod
+    def get_all_by_status(self, status):
+
+        """Get all of the emergencies with a specific status."""
+
+        db = get_db()
+        rows = db.execute('SELECT * FROM emergencies WHERE emergency_status = ?', (status)).fetchall()
+
+        if rows is None:
+            return None
+        return [self._from_db_row(row) for row in rows]
+
+
+    def to_dict(self):
+
+        """Convert emergency to dictionary."""
+
+        return {
+            'id': self.id,
+            'name': self.name,
+            'status': self.status,
+            'date': self.date,
+            'img': self.img_url,
+            'description': self.description}
+    
+
     def isActive(self):
+
         """ Check if the emergency is currently active. """
         
         return self.status
