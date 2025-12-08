@@ -1,6 +1,6 @@
 from flask import (Blueprint, g, render_template, request)
 from sheltr.auth import manager_required
-from sheltr.models import Shelter
+from sheltr.models import Shelter, Task
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/')
@@ -28,3 +28,10 @@ def shelter(shelter_id):
         tasks = [t for t in tasks if t.status in status]
 
     return render_template('admin/admin-shelter.html', shelter=shelter, tasks=tasks, status=status)
+
+@bp.route('/shelters/<int:shelter_id>/<int:task_id>')
+@manager_required
+def task(shelter_id, task_id):
+    # Get all information for the task selected.
+    task = Task.get_by_id(task_id)
+    return render_template('admin/admin-task.html', shelter_id=shelter_id, task=task)
