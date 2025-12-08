@@ -67,8 +67,8 @@ CREATE TABLE donation (
     donation_id INTEGER PRIMARY KEY AUTOINCREMENT,
     emergency_id INTEGER,
     user_id INTEGER,
-    donation_date DATE,
-    donation_quantity REAL, 
+    donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    donation_quantity DECIMAL(19,2), 
     donation_message VARCHAR(400),
     FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id)
     FOREIGN KEY (user_id) REFERENCES user(user_id)
