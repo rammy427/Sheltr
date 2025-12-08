@@ -79,6 +79,7 @@
                         </td>
                         <td>
                             <a class="btn btn-primary" href="{{ url_for('admin.task', shelter_id=shelter.id, task_id=task.id) }}">Edit</a>
+                            <button class="btn btn-danger" onclick="deleteTask({{ task.id }})">Delete</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -127,6 +128,18 @@
                     window.location.reload();
                 }
             });
+        }
+        function deleteTask(task_id)
+        {
+            fetch(`/tasks/${task_id}/delete`,
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => location.reload());
         }
     </script>
 {% endblock %}

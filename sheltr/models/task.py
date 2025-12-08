@@ -125,23 +125,30 @@ class Task:
         
         # Insert into database.
         db = get_db()
-        # try:
-        cursor = db.execute(
-            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
-            (name.strip(), description.strip(), status, shelter_id)
-        )
+        try:
+            cursor = db.execute(
+                "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+                (name.strip(), description.strip(), status, shelter_id)
+            )
+            db.commit()
+
+            task = cls.get_by_id(cursor.lastrowid)
+            # Set the associated shelter.
+            task.set_shelter(db, shelter_id)
+            # Assign volunteer.
+            task.set_volunteer(db, volunteer_id)
+
+            # Return created shelter.
+            return task, None
+        except:
+            return None, "Failed to create task."
+
+    def delete(self):
+        """Delete task from database."""
+        db = get_db()
+        print(self.id, type(self.id))
+        db.execute("DELETE FROM task WHERE task_id = ?", (self.id,))
         db.commit()
-
-        task = cls.get_by_id(cursor.lastrowid)
-        # Set the associated shelter.
-        task.set_shelter(db, shelter_id)
-        # Assign volunteer.
-        task.set_volunteer(db, volunteer_id)
-
-        # Return created shelter.
-        return task, None
-        # except:
-        #     return None, "Failed to create task."
     
     def update(self, name=None, description=None, volunteer_id=None):
         """
