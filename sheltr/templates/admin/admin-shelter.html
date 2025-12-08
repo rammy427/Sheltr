@@ -41,6 +41,7 @@
                     <tr>
                         <th scope="col">Task Name</th>
                         <th scope="col">Task Description</th>
+                        <th scope="col">Volunteer</th>
                         <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -50,6 +51,7 @@
                     <tr>
                         <td>{{ task.name }}</td>
                         <td>{{ task.description }}</td>
+                        <td>{{ task.get_volunteer().name }}</td>
                         <td>
                             <div class="dropdown">
                                 <button id="task-status-{{ task.id }}" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

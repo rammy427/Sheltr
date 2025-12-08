@@ -8,12 +8,13 @@ from sheltr.db import get_db
 from datetime import datetime, timezone
 
 class Task:
-    def __init__(self, id=None, name=None, description=None, status=None, completed_at=None):
+    def __init__(self, id=None, name=None, description=None, status=None, completed_at=None, volunteer=None):
         self.id = id
         self.name = name
         self.description = description
         self.status = status
         self.completed_at = completed_at
+        self.volunteer = volunteer
 
     @staticmethod
     def validate_name(name):
@@ -55,6 +56,19 @@ class Task:
         if row is None:
             return None
         return cls._from_db_row(row)
+    
+    def get_volunteer(self):
+        """Get the associated volunteer for this task."""
+        from .volunteer import Volunteer
+        if not self.volunteer:
+            db = get_db()
+            row = db.execute('''SELECT *
+                            FROM user JOIN user_task JOIN task
+                            WHERE user.user_id = user_task.user_id
+                            AND task.task_id = user_task.task_id
+                            AND task.task_id = ?''', (self.id,)).fetchone()
+            self.volunteer = Volunteer._from_db_row(row)
+        return self.volunteer
     
     def update(self, name=None, description=None):
         """
