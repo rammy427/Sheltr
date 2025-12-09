@@ -15,6 +15,13 @@
             <p>View and manage your account</p>
         </a>
 
+        {% if g.user.is_volunteer() %}
+            <a href="{{ url_for('shelters.view') }}" class="dashboard-card">
+                <h3>Volunteer at Shelters</h3>
+                <p>View available shelters and their tasks</p>
+            </a>
+        {% endif %}
+
         <a href="{{ url_for('emergency.view') }}" class="dashboard-card">
             <h3>Emergencies</h3>
             <p>View emergency information</p>

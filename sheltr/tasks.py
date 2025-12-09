@@ -1,4 +1,4 @@
-from flask import (Blueprint, g, render_template, request, jsonify)
+from flask import (Blueprint, g, render_template, request, jsonify, flash)
 from sheltr.auth import login_required, manager_required
 from sheltr.models import Volunteer, Task
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
@@ -37,3 +37,24 @@ def delete_task(task_id):
     if task:
         task.delete()
     return '', 204
+
+@bp.route('/<int:task_id>/<int:user_id>', methods=["POST"])
+@login_required
+def assign_task(user_id, task_id):
+    volunteer = Volunteer.get_by_id(user_id)
+    if not volunteer:
+        flash('Volunteer not found.')
+        return 'Volunteer not found.', 404
+    
+    task = Task.get_by_id(task_id)
+    if not task:
+        flash('Task not found.')
+        return 'Task not found.', 404
+    
+    success, error = volunteer.assign_task(task_id)
+    if success:
+        flash('Successfully registered for this task!', 'success')
+        return '', 204
+    else:
+        flash(error, 'danger')
+        return error, 500

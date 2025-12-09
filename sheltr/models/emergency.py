@@ -131,7 +131,7 @@ class Emergency:
         if rows is None:
             return None
         return [self._from_db_row(row) for row in rows]
-
+    
 
     @classmethod
     def assigned_shelters(self, e_id):

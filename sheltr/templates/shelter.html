@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1 class="mx-auto text-center">{% block title %}View Shelter{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto text-center">
+        <h3>{{ shelter.name }}</h3>
+        <p>{{ shelter.description }}</p>
+        <p>Location: {{ shelter.location }}</p>
+        <h2>Tasks for this shelter:</h2>
+        {% if tasks %}
+            <table class="table my-3">
+                <thead>
+                    <tr>
+                        <th scope="col">Task Name</th>
+                        <th scope="col">Task Description</th>
+                        <th scope="col">Volunteer</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td class="col-3">{{ task.name }}</td>
+                        <td class="col-4">{{ task.description }}</td>
+                        <td class="col-2">
+                            {% if task.get_volunteer() %}
+                                {{ task.get_volunteer().name }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" onclick="registerForTask({{ user.id }}, {{ task.id }})">Register</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="my-3">No assigned tasks.</p>
+        {% endif %}
+    </div>
+    <script>
+        function registerForTask(user_id, task_id)
+        {
+            fetch(`/tasks/${task_id}/${user_id}`,
+            {
+                method: "POST",
+                headers:
+                {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => location.reload());
+        }
+    </script>
+{% endblock %}
