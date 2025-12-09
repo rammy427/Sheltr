@@ -17,4 +17,4 @@ def shelter(shelter_id):
     shelter = Shelter.get_by_id(shelter_id)
     # Get all tasks for this shelter.
     tasks = shelter.get_tasks()
-    return render_template('shelter.html', shelter=shelter, tasks=tasks)
+    return render_template('shelter.html', user=g.user, shelter=shelter, tasks=tasks)
