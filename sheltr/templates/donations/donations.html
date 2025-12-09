@@ -11,13 +11,12 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-center mb-0">Recent Donations</h2>
         </div>
-
+    
         {% if donations %}
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col">ID</th>
                             <th scope="col">Emergency</th>
                             <th scope="col">User</th>
                             <th scope="col">Date</th>
@@ -28,9 +27,8 @@
                     <tbody>
                         {% for donation in donations %}
                             <tr>
-                                <td>{{ donation['donation_id']}}</td>
-                                <td>{{ donation['emergency_id']}}</td>
-                                <td>{{ donation['user_id']}}</td>
+                                <td>{{ donation['emergency_name']}}</td>
+                                <td>{{ donation['username']}}</td>
                                 <td>{{ donation['donation_date'].strftime('%Y-%m-%d %H:%M')}}</td>
                                 <td>{{ donation['donation_quantity']}}</td>
                                 <td>{{ donation['donation_message']}}</td>
@@ -45,4 +43,13 @@
             </div>
         {% endif %}
     </div>
+    <div class="container py-4">
+        <div class="text-center">
+            <a href="{{ url_for('donations.make_donation') }}"> 
+                <button class="btn btn-primary"> Donate </button>
+            </a>
+        </div>
+    </div>
+
 {% endblock %}
+

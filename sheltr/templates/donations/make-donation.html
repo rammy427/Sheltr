@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1 class="mx-auto text-center">{% block title %}Make a Donation{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class ="auth-card"
+        <form method ="post" class = "auth-card">
+            <div class="auth-field">
+                <label for="emergency_id">Select Emergency *</label>
+                <input type = "text" name="emergency" id="emergency_id" maxlength="100"> 
+            </div>
+            <div class="auth-field">
+                <label for="amount">Donation Amount *</label>
+                <input type = "number" name="amount" id="amount" min="1" max="100000" required> 
+            </div> 
+            <div class="auth-field">
+                <label for="provider">Select payment provider *</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Select an option</option>
+                    <option value="Paypal">Paypal</option>
+                    <option value="Venmo">Venmo</option>
+                    <option value="Apple Pay">Apple Pay</option>
+                    <option value="Credit Card">Credit Card</option>
+                </select>
+            </div>
+            <div class="auth-field">
+                <label for="msg">Write a message (optional) *</label>
+                <input type="text" name="msg" id="msg" maxlength="400"> 
+            </div>
+        </form>
+</div>
+{% endblock %}

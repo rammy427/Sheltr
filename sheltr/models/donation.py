@@ -8,7 +8,8 @@ from decimal import Decimal, ROUND_HALF_UP
 
 
 class Donation:
-
+    pass
+"""
     def __init__(self, donation_id = None, emergengy_id = None, user_id = None, transaction_date = None, donation_quantity = 0, donation_msg = None ):
         self.id = donation_id
         self.e_id = emergengy_id
@@ -19,11 +20,11 @@ class Donation:
 
     @staticmethod
     def validate_quantity(donation_quantity):
-        """Validate quantiy meets:
+        Validate quantiy meets:
         - Minimum of 1 dollar
         - Value must be decimal
         - 
-        """
+        
         if Decimal(str(donation_quantity)) <= 0.99:
             return False, "Minimum of 1 dollar requiered "
         if not re.match(r'^\d+(\.\d+)?$', donation_quantity):
@@ -59,3 +60,5 @@ class Donation:
     @classmethod
     def emergency_donation_history(cls, e_id): 
         pass
+
+"""

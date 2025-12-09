@@ -11,12 +11,12 @@ def view():
     """View the 10 most recent donations"""
     db = get_db()
 
-    donation_list = db.execute('SELECT * FROM donation ORDER BY donation_date DESC LIMIT 10').fetchall()
+    donation_list = db.execute('SELECT user.username, emergencies.emergency_name, donation.donation_date, donation.donation_quantity, donation.donation_message  FROM ((donation JOIN user ON donation.user_id = user.user_id) JOIN emergencies ON donation.emergency_id = emergencies.emergency_id) ORDER BY donation.donation_date DESC LIMIT 10').fetchall()
 
     return render_template('donations/donations.html', donations = donation_list)
 
 
-"""
+
 
 @bp.route('/make-donation', methods = ('GET', 'POST'))
 @login_required
@@ -42,12 +42,11 @@ def make_donation():
             db.execute('INSERT INTO donation (emergency_id, user_id, donation_quantity, donation_message) VALUES(?, ?, ?, ?)', (emergency_selection, g.user['id'], amount, msg))
 
             db.commit()
-            return(redirect(url_for('donations.view')))
+            return(redirect(url_for('donations.make_donation')))
         
     return render_template('donations/make-donation.html')
 
 
-"""
 
 
     
