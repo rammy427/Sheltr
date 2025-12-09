@@ -30,12 +30,18 @@
             <div style= "text-align: center" >
                 <img src = {{ emergency.img_url}}><br>
 
-                <button class="button button-options">Shelters</button><br>
                 <button class="button button-options">Donate</button><br>
 
             </div>
 
         </div>
 
-</div>
+    </div>
+
+    <div class="grid-container">
+        {%for s in shelters%}
+
+            {{ s.name }}
+        {% endfor %}
+    </div>
 {% endblock %}

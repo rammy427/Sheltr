@@ -3,6 +3,7 @@ Emergency model for Sheltr application.
 Contains all of the operations to handle emergencies.
 """
 from sheltr.db import get_db
+from .shelter import Shelter
 
 class Emergency:
 
@@ -118,6 +119,7 @@ class Emergency:
             return None
         return [self._from_db_row(row) for row in rows]
     
+
     @classmethod
     def get_all_by_status(self, status):
 
@@ -129,6 +131,19 @@ class Emergency:
         if rows is None:
             return None
         return [self._from_db_row(row) for row in rows]
+
+
+    @classmethod
+    def assigned_shelters(self, e_id):
+
+        """Get all of the shelters for an emergency."""
+
+        db = get_db()
+        rows = db.execute('SELECT * FROM shelters JOIN shelters_of_emergency WHERE shelters.shelter_id = shelters_of_emergency.shelter_id AND emergency_id = ?', (e_id,)).fetchall()
+
+        if rows is None:
+            return None
+        return [Shelter._from_db_row(row) for row in rows]
 
 
     def to_dict(self):
