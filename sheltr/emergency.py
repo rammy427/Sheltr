@@ -23,7 +23,8 @@ def specific_emergency(e_id):
     """ Display the specific emergency that was clicked on. """
 
     emergency = Emergency.get_one_by_id(e_id)
-    return render_template('single_emergency.html', emergency = emergency)
+    shelters = Emergency.assigned_shelters(e_id)
+    return render_template('single_emergency.html', emergency = emergency, shelters = shelters)
 
 
     
