@@ -1,6 +1,6 @@
 from flask import (Blueprint, g, render_template, request, flash, redirect, url_for)
 from sheltr.auth import manager_required
-from sheltr.models import Shelter, Task, Volunteer
+from sheltr.models import Shelter, Task, Volunteer, Emergency
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/')
@@ -76,3 +76,12 @@ def add_task(shelter_id):
             flash(error, 'error')
 
     return render_template('admin/admin-task.html', shelter_id=shelter_id, volunteers=volunteers)
+
+
+@bp.route('/emergencies/<int:e_id>')
+@manager_required
+def manage_emergency(e_id):
+
+    emergency = Emergency.get_one_by_id(e_id)
+    shelters = Emergency.assigned_shelters(e_id)
+    return render_template('admin/admin-emergency.html', emergency = emergency, shelters = shelters)
