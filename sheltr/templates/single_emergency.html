@@ -45,18 +45,21 @@
                         <th scope="col">Shelter Name</th>
                         <th scope="col">Location</th>
                         <th scope="col">Description</th>
+                        <th scope="col">View</th>
+
                 </tr>
             </thead>
             <tbody>
                 {%for s in shelters%}
                     <tr>
-                        <td>{{ s.name }}</td>
-                        <td>{{ s.location }}</td>
-                        <td>{{ s.description }}</td>
-                        <td>
+
+                        <td class = "col-2">{{ s.name }}</td>
+                        <td class = "col-2">{{ s.location }}</td>
+                        <td class = "col-4">{{ s.description }}</td>
+                        <td class = "col-2">
                             
                             <a class="btn btn-primary" type="button" 
-                            href = "{{ url_for('shelters.shelter', shelter_id = s.id) }}">Go To
+                            href = "{{ url_for('shelters.shelter', shelter_id = s.id) }}"> Go to
                             </a>
                         </td>
 
