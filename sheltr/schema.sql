@@ -48,27 +48,41 @@ CREATE TABLE shelters_of_emergency (
 CREATE TABLE task (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
     task_name VARCHAR(50) NOT NULL,
+    shelter_id INTEGER,
     description TEXT NOT NULL,
     status VARCHAR(11) NOT NULL,
     completed_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id)
 );
 
 CREATE TABLE user_task (
     user_id INTEGER,
-    task_id INTEGER,
+    task_id INTEGER UNIQUE,
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (task_id) REFERENCES task(id),
     PRIMARY KEY (user_id, task_id)
 );
 
 -- TEMPORARY INSERTIONS.
--- INSERT INTO user (username, email, password, name, phone, city) VALUES ('TestUser', 'test@test.test', 'password', 'TestUser', '1111111111', 'City');
-INSERT INTO task (task_name, description, status) VALUES ('Task 1', 'Pending task.', 'pending');
-INSERT INTO task (task_name, description, status) VALUES ('Task 2', 'Current task.', 'in_progress');
-INSERT INTO task (task_name, description, status) VALUES ('Task 3', 'Finished task.', 'finished');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol1', 'volunteer1@e.mail', 'password', 'Volunteer 1', '1111111111', 'City');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol2', 'volunteer2@e.mail', 'password', 'Volunteer 2', '1111111111', 'City');
+INSERT INTO user (username, email, password, name, phone, city) VALUES ('vol3', 'volunteer3@e.mail', 'password', 'Volunteer 3', '1111111111', 'City');
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 1', 'Pending task for shelter 1.', 'pending', 1);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 2', 'Current task for shelter 2.', 'in_progress', 2);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 3', 'Finished task for shelter 3.', 'finished', 3);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 4', 'Pending task for shelter 1.', 'pending', 1);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 5', 'Current task for shelter 2.', 'in_progress', 2);
+INSERT INTO task (task_name, description, status, shelter_id) VALUES ('Task 6', 'Finished task for shelter 3.', 'finished', 3);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 1);
 INSERT INTO user_task (user_id, task_id) VALUES (1, 2);
-INSERT INTO user_task (user_id, task_id) VALUES (1, 3);
+INSERT INTO user_task (user_id, task_id) VALUES (2, 3);
+INSERT INTO user_task (user_id, task_id) VALUES (2, 4);
+INSERT INTO user_task (user_id, task_id) VALUES (3, 5);
+INSERT INTO user_task (user_id, task_id) VALUES (3, 6);
+
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Looky', 'Bayamon', 'Headquarters of Looky');
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Sheltr', 'San Francisco', 'Headquarters of Sheltr');
+INSERT INTO shelters (shelter_name, shelter_location, shelter_description) VALUES ('Lajas', 'Lajas', 'Lajas');
 INSERT INTO emergencies(emergency_name, emergency_status, emergency_date, image_url, emergency_description) VALUES ("Fuego en Ponce", True, "2020-05-10", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Large_bonfire.jpg/500px-Large_bonfire.jpg", "Fire is the rapid oxidation of a fuel in the exothermic chemical process of combustion, releasing heat, light, and various reaction products. Flames, the most visible portion of the fire, are produced in the combustion reaction when the fuel reaches its ignition point temperature. Flames from hydrocarbon fuels consist primarily of carbon dioxide, water vapor, oxygen, and nitrogen. If hot enough, the gases may become ionized to produce plasma. The color and intensity of the flame depend on the type of fuel and composition of the surrounding gases.");
 INSERT INTO emergencies(emergency_name, emergency_status, emergency_date, image_url, emergency_description) VALUES ("Inundacion en Condado", False, "2025-07-11", "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/40/51/e0/aerial-images.jpg?w=900&h=500&s=1", "Condado es una comunidad frente al mar, bordeada de árboles, orientada a los peatones en San Juan, Puerto Rico. Es una zona de clase media a alta, está situado al este del centro histórico del Viejo San Juan. Es uno de los 40 «sub-barrios» de Santurce. La superficie de tierra es de 0,82 km² (824 791 m²), con una población de 6170 residentes según el censo de los Estados Unidos de 2000. La frontera oriental se caracteriza por la Avenida de Diego y de su extensión recta hacia la costa atlántica. En el sur, el distrito está delimitado por Calle Wilson, Calle Aldea, Expreso Baldorioty de Castro, Calle Piccioni y calle Delcasse, y por la Laguna del Condado (de este a oeste). El punto más occidental es el «Puente Dos Hermanos», donde termina la Avenida Ashford y comienza el San Juan Antiguo. En el norte están las playas del Océano Atlántico.");
