@@ -37,11 +37,33 @@
         </div>
 
     </div>
+    
+    <div class="container mx-auto text-center">
+        <table class="table my-3">
+            <thead>
+                <tr>
+                        <th scope="col">Shelter Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for s in shelters%}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.location }}</td>
+                        <td>{{ s.description }}</td>
+                        <td>
+                            
+                            <a class="btn btn-primary" type="button" 
+                            href = "{{ url_for('shelters.shelter', shelter_id = s.id) }}">Go To
+                            </a>
+                        </td>
 
-    <div class="grid-container">
-        {%for s in shelters%}
-
-            {{ s.name }}
-        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
 {% endblock %}
