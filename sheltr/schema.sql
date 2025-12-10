@@ -39,7 +39,7 @@ CREATE TABLE shelters_of_emergency (
     starting_date DATE NOT NULL,
     shelter_id INTEGER,
     emergency_id INTEGER,
-    end_date DATE,
+    end_date date NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (starting_date, shelter_id),
     FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id),

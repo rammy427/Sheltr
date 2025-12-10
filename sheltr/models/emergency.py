@@ -54,30 +54,37 @@ class Emergency:
             description = row['emergency_description'])
     
 
-    @classmethod
-    def edit_em(self, name = None, date = None, img_url = None, description = None):
-
+    def edit_em(self, name=None, date=None, img_url=None, description=None):
         """
         Let's the manager edit the emergency information.
         Changes can be made to the name, date, image or the description of the emergency.
+        Returns (success, error_message).
         """
 
         if name is not None:
             self.name = name.strip()
-        
+
         if date is not None:
             self.date = date
 
         if img_url is not None:
-            self.img_url = img_url
+            self.img_url = img_url.strip() if img_url.strip() else None
+
+        if description is not None:
+            self.description = description.strip() if description else None
 
         # Update emergency in the database
         db = get_db()
 
-        db.execute("UPDATE emergencies SET name = ?, date = ?, img_url = ?, description = ? WHERE id = ?", 
-            (self.name, self.date, self.img_url, self.description, self.id))
-        
-        db.commit()
+        try:
+            db.execute(
+                "UPDATE emergencies SET emergency_name = ?, emergency_date = ?, image_url = ?, emergency_description = ? WHERE emergency_id = ?",
+                (self.name, self.date, self.img_url, self.description, self.id)
+            )
+            db.commit()
+            return True, None
+        except Exception as e:
+            return False, str(e)
 
     
     @classmethod
@@ -139,40 +146,12 @@ class Emergency:
         """Get all of the shelters for an emergency."""
 
         db = get_db()
-        rows = db.execute('''SELECT *
-                          FROM shelters JOIN shelters_of_emergency
-                          WHERE shelters.shelter_id = shelters_of_emergency.shelter_id
-                          AND emergency_id = ?''', (e_id,)).fetchall()
+        rows = db.execute('SELECT * FROM shelters JOIN shelters_of_emergency WHERE shelters.shelter_id = shelters_of_emergency.shelter_id AND emergency_id = ?', (e_id,)).fetchall()
 
         if rows is None:
             return None
         return [Shelter._from_db_row(row) for row in rows]
 
-    def assign_shelter(self, shelter_id):
-        """Assign shelter to this emergency.
-        Returns (success, error_message)."""
-        shelter = Shelter.get_by_id(shelter_id)
-        if not shelter:
-            return False, "Shelter not found."
-        
-        from datetime import date
-        cur_date = date.today()
-        db = get_db()
-        db.execute("INSERT INTO shelters_of_emergency (emergency_id, shelter_id, starting_date) VALUES (?, ?, ?)", (self.id, shelter_id, cur_date))
-        db.commit()
-        return True, None
-    
-    def remove_shelter(self, shelter_id):
-        """Unlink shelter from this emergency.
-        Returns (success, error_message)."""
-        shelter = Shelter.get_by_id(shelter_id)
-        if not shelter:
-            return False, "Shelter not found."
-        
-        db = get_db()
-        db.execute("DELETE FROM shelters_of_emergency WHERE emergency_id = ? AND shelter_id = ?", (self.id, shelter_id))
-        db.commit()
-        return True, None
 
     def to_dict(self):
 

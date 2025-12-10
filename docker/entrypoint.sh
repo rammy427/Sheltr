@@ -75,18 +75,18 @@ with app.app_context():
     for link in links:
         db.execute('INSERT INTO shelters_of_emergency (starting_date, shelter_id, emergency_id, end_date) VALUES (?, ?, ?, ?)', link)
 
-    # Insert additional tasks
+    # Insert additional tasks (with shelter_id)
     tasks = [
-        ('Set up cots', 'Arrange 100 cots in the main hall.', 'pending'),
-        ('Stock water supplies', 'Ensure 50 cases of bottled water.', 'pending'),
-        ('Coordinate food delivery', 'Contact restaurants for donations.', 'in_progress'),
-        ('Medical station setup', 'Set up first aid station.', 'pending'),
-        ('Register evacuees', 'Process incoming evacuees.', 'in_progress'),
-        ('Pet care area', 'Establish pet area with supplies.', 'pending'),
-        ('Communication center', 'Set up phones and charging stations.', 'finished'),
+        ('Set up cots', 'Arrange 100 cots in the main hall.', 'pending', 1),
+        ('Stock water supplies', 'Ensure 50 cases of bottled water.', 'pending', 2),
+        ('Coordinate food delivery', 'Contact restaurants for donations.', 'in_progress', 3),
+        ('Medical station setup', 'Set up first aid station.', 'pending', 4),
+        ('Register evacuees', 'Process incoming evacuees.', 'in_progress', 5),
+        ('Pet care area', 'Establish pet area with supplies.', 'pending', 1),
+        ('Communication center', 'Set up phones and charging stations.', 'finished', 2),
     ]
     for t in tasks:
-        db.execute('INSERT INTO task (task_name, description, status) VALUES (?, ?, ?)', t)
+        db.execute('INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)', t)
 
     # Assign tasks to volunteers
     assignments = [(1, 4), (1, 5), (2, 6), (2, 7), (3, 8), (3, 9), (1, 10)]
