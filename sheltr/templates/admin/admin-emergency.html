@@ -46,9 +46,9 @@
                 Link shelter
             </button>
             <ul class="dropdown-menu">
-                <li><button class="dropdown-item">Shelter 1</a></li>
-                <li><button class="dropdown-item">Shelter 2</a></li>
-                <li><button class="dropdown-item">Shelter 3</a></li>
+                {% for shelter in shelters %}
+                    <li><button class="dropdown-item">{{ shelter.name }}</button></li>
+                {% endfor %}
             </ul>
         </div>
         <table class="table">
@@ -61,7 +61,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for shelter in shelters %}
+                {% for shelter in assigned_shelters %}
                     <tr>
                         <td class="col-2">{{ shelter.name }}</td>
                         <td class="col-2">{{ shelter.location }}</td>

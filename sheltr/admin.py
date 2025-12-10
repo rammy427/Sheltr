@@ -85,7 +85,7 @@ def emergencies():
 @bp.route('/emergencies/<int:e_id>')
 @manager_required
 def manage_emergency(e_id):
-
     emergency = Emergency.get_one_by_id(e_id)
-    shelters = Emergency.assigned_shelters(e_id)
-    return render_template('admin/admin-emergency.html', emergency = emergency, shelters = shelters)
+    assigned_shelters = Emergency.assigned_shelters(e_id)
+    shelters = Shelter.get_all()
+    return render_template('admin/admin-emergency.html', emergency = emergency, assigned_shelters = assigned_shelters, shelters = shelters)
