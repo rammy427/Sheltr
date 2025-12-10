@@ -161,6 +161,18 @@ class Emergency:
         db.execute("INSERT INTO shelters_of_emergency (emergency_id, shelter_id, starting_date) VALUES (?, ?, ?)", (self.id, shelter_id, cur_date))
         db.commit()
         return True, None
+    
+    def remove_shelter(self, shelter_id):
+        """Unlink shelter from this emergency.
+        Returns (success, error_message)."""
+        shelter = Shelter.get_by_id(shelter_id)
+        if not shelter:
+            return False, "Shelter not found."
+        
+        db = get_db()
+        db.execute("DELETE FROM shelters_of_emergency WHERE emergency_id = ? AND shelter_id = ?", (self.id, shelter_id))
+        db.commit()
+        return True, None
 
     def to_dict(self):
 

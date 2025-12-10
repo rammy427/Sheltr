@@ -47,3 +47,25 @@ def link_shelter(e_id, s_id):
     else:
         flash(error, 'danger')
         return error, 500
+    
+@bp.route('/<int:e_id>/<int:s_id>/remove', methods=["DELETE"])
+@manager_required
+def remove_shelter(e_id, s_id):
+    """Unlink a given shelter from the given emergency."""
+    emergency = Emergency.get_one_by_id(e_id)
+    if not emergency:
+        flash('Emergency not found.')
+        return 'Emergency not found.', 404
+    
+    shelter = Shelter.get_by_id(s_id)
+    if not shelter:
+        flash('Shelter not found.')
+        return 'Shelter not found.', 404
+    
+    success, error = emergency.remove_shelter(s_id)
+    if success:
+        flash('Shelter has been removed.', 'success')
+        return '', 204
+    else:
+        flash(error, 'danger')
+        return error, 500

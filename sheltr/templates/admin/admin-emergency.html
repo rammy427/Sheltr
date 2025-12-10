@@ -67,7 +67,7 @@
                         <td class="col-2">{{ shelter.location }}</td>
                         <td class="col-5">{{ shelter.description }}</td>
                         <td>
-                            <button class="btn btn-danger">Unlink</button>
+                            <button class="btn btn-danger" onclick="unlinkShelter({{ emergency.id }}, {{ shelter.id }})">Unlink</button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -80,6 +80,17 @@
             fetch(`/emergency/${emergency_id}/${shelter_id}/add`,
             {
                 method: "POST",
+                    headers:
+                    {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+            }).then(res => location.reload());
+        }
+        function unlinkShelter(emergency_id, shelter_id)
+        {
+            fetch(`/emergency/${emergency_id}/${shelter_id}/remove`,
+            {
+                method: "DELETE",
                     headers:
                     {
                         "X-Requested-With": "XMLHttpRequest"
