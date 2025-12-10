@@ -393,18 +393,18 @@ with app.app_context():
         )
 
     additional_tasks = [
-        ("Set up cots", "Arrange 100 cots in the main hall with proper spacing for social distancing.", "pending"),
-        ("Stock water supplies", "Ensure each shelter station has at least 50 cases of bottled water.", "pending"),
-        ("Coordinate food delivery", "Contact local restaurants for meal donations. Target: 500 meals/day.", "in_progress"),
-        ("Medical station setup", "Set up first aid station with basic supplies and AED equipment.", "pending"),
-        ("Register evacuees", "Process incoming evacuees and assign them to available spaces.", "in_progress"),
-        ("Pet care area", "Establish designated area for evacuees with pets. Ensure supplies available.", "pending"),
-        ("Communication center", "Set up phones and charging stations for evacuee use.", "finished"),
+        ("Set up cots", "Arrange 100 cots in the main hall with proper spacing for social distancing.", "pending", 1),
+        ("Stock water supplies", "Ensure each shelter station has at least 50 cases of bottled water.", "pending", 2),
+        ("Coordinate food delivery", "Contact local restaurants for meal donations. Target: 500 meals/day.", "in_progress", 3),
+        ("Medical station setup", "Set up first aid station with basic supplies and AED equipment.", "pending", 4),
+        ("Register evacuees", "Process incoming evacuees and assign them to available spaces.", "in_progress", 5),
+        ("Pet care area", "Establish designated area for evacuees with pets. Ensure supplies available.", "pending", 1),
+        ("Communication center", "Set up phones and charging stations for evacuee use.", "finished", 2),
     ]
 
     for t in additional_tasks:
         db.execute(
-            "INSERT INTO task (task_name, description, status) VALUES (?, ?, ?)",
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
             t
         )
 
