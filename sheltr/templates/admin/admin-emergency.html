@@ -47,7 +47,7 @@
             </button>
             <ul class="dropdown-menu">
                 {% for shelter in shelters %}
-                    <li><button class="dropdown-item">{{ shelter.name }}</button></li>
+                    <li><button class="dropdown-item" onclick="linkShelter({{ emergency.id }}, {{ shelter.id }})">{{ shelter.name }}</button></li>
                 {% endfor %}
             </ul>
         </div>
@@ -74,6 +74,17 @@
             </tbody>
         </table>
     </div>
-</div>
-
+    <script>
+        function linkShelter(emergency_id, shelter_id)
+        {
+            fetch(`/emergency/${emergency_id}/${shelter_id}/add`,
+            {
+                method: "POST",
+                    headers:
+                    {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+            }).then(res => location.reload());
+        }
+    </script>
 {% endblock %}
