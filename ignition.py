@@ -409,7 +409,7 @@ with app.app_context():
         )
 
     task_assignments = [
-        (1, 4), (1, 5), (2, 6), (2, 7), (3, 8), (3, 9), (1, 10),
+        (1, 7), (1, 6), (2, 5), (2, 4), (3, 3), (3, 2), (1, 1),
     ]
 
     for assignment in task_assignments:

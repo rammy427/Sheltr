@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS emergencies; 
-DROP TABLE IF EXISTS shelters; 
+DROP TABLE IF EXISTS user_task;
 DROP TABLE IF EXISTS shelters_of_emergency;
 DROP TABLE IF EXISTS task;
-DROP TABLE IF EXISTS user_task;
+DROP TABLE IF EXISTS shelters;
 DROP TABLE IF EXISTS donation;
+DROP TABLE IF EXISTS emergencies; 
+DROP TABLE IF EXISTS user;
 
 CREATE TABLE user (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,7 +44,7 @@ CREATE TABLE shelters_of_emergency (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (starting_date, shelter_id),
     FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id),
-    FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id)
+    FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id) ON DELETE CASCADE
 );
 CREATE TABLE task (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,8 +60,8 @@ CREATE TABLE task (
 CREATE TABLE user_task (
     user_id INTEGER,
     task_id INTEGER UNIQUE,
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (task_id) REFERENCES task(id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (task_id) REFERENCES task(task_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, task_id)
 );
 

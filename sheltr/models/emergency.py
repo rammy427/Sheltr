@@ -21,11 +21,15 @@ class Emergency:
 
 
     @classmethod
-    def new_emergency(self, name, status, date, img_url = None, description = None):
+    def new_emergency(self, name, status, date=None, img_url=None, description=None):
 
         """ This function adds an emergency to the database. 
-        It is a void function. 
+        Returns (success, error_message). 
         """
+        import datetime
+
+        if date is None:
+            date = datetime.date.today()
 
         # Access the database
         db = get_db()
@@ -35,9 +39,10 @@ class Emergency:
                 (name.strip(), status, date, img_url.strip() if img_url else None, description.strip() if description else None ))
             
             db.commit()
+            return True, None
 
         except db.OperationalError:
-            print("An error has occured creating a new emergency. Please try again.")   
+            return False, "An error has occured creating a new emergency. Please try again."  
 
 
     @classmethod
@@ -54,7 +59,7 @@ class Emergency:
             description = row['emergency_description'])
     
 
-    def edit_em(self, name=None, date=None, img_url=None, description=None):
+    def edit_em(self, name=None, date=None, img_url=None, description=None, status=None):
         """
         Let's the manager edit the emergency information.
         Changes can be made to the name, date, image or the description of the emergency.
@@ -72,14 +77,17 @@ class Emergency:
 
         if description is not None:
             self.description = description.strip() if description else None
+        
+        if status is not None:
+            self.status = status.strip()
 
         # Update emergency in the database
         db = get_db()
 
         try:
             db.execute(
-                "UPDATE emergencies SET emergency_name = ?, emergency_date = ?, image_url = ?, emergency_description = ? WHERE emergency_id = ?",
-                (self.name, self.date, self.img_url, self.description, self.id)
+                "UPDATE emergencies SET emergency_name = ?, emergency_date = ?, image_url = ?, emergency_description = ?, emergency_status = ? WHERE emergency_id = ?",
+                (self.name, self.date, self.img_url, self.description, self.status, self.id)
             )
             db.commit()
             return True, None
@@ -97,7 +105,7 @@ class Emergency:
         # Remove an emergency from the database
         db = get_db()
 
-        db.execute('DELETE * FROM emergencies WHERE emergency_id = ?', (e_id))
+        db.execute('DELETE FROM emergencies WHERE emergency_id = ?', (e_id,))
         db.commit()
 
 

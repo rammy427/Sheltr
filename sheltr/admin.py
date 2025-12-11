@@ -80,12 +80,49 @@ def add_task(shelter_id):
 @bp.route('/emergencies')
 @manager_required
 def emergencies():
-    return f"This will show the list of all emergencies for the manager."
+    emergencies = Emergency.get_all()
+    return render_template('admin/admin-emergencies.html', emergencies=emergencies)
 
-@bp.route('/emergencies/<int:e_id>')
+@bp.route('/emergencies/<int:e_id>', methods=('GET', 'POST'))
 @manager_required
 def manage_emergency(e_id):
     emergency = Emergency.get_one_by_id(e_id)
+
+    # If POST request, or form was submitted, update the emergency.
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+        status = request.form.get('status', '').strip()
+
+        # Update emergency using model method.
+        success, error = emergency.edit_em(name=name, description=description, status=status)
+
+        if success:
+            flash('Emergency updated successfully!', 'success')
+            return redirect(url_for('admin.emergencies'))
+        else:
+            flash(error, 'error')
+
     assigned_shelters = Emergency.assigned_shelters(e_id)
     shelters = Shelter.get_all()
     return render_template('admin/admin-emergency.html', emergency = emergency, assigned_shelters = assigned_shelters, shelters = shelters)
+
+@bp.route('/shelters/add', methods=('GET', 'POST'))
+@manager_required
+def add_emergency():
+    # If POST request, or form was submitted, update the emergency.
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+        status = request.form.get('status', '').strip()
+
+        # Update emergency using model method.
+        success, error = Emergency.new_emergency(name=name, description=description, status=status)
+
+        if success:
+            flash('Emergency updated successfully!', 'success')
+            return redirect(url_for('admin.emergencies'))
+        else:
+            flash(error, 'error')
+    
+    return render_template('admin/admin-emergency.html')
