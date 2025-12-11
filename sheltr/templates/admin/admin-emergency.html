@@ -29,7 +29,7 @@
                 <div class="mb-3">
                     <label for="description" class="form-label">Description *</label>
                     <textarea class="form-control" name="description" id="description"
-                              rows="4" maxlength="1000" required>{{ emergency.description if description else None }}</textarea>
+                              rows="4" maxlength="1000" required>{{ emergency.description if emergency.description else None }}</textarea>
                     <div class="form-text">Maximum 1000 characters</div>
                 </div>
 

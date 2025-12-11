@@ -54,7 +54,7 @@ class Emergency:
             description = row['emergency_description'])
     
 
-    def edit_em(self, name=None, date=None, img_url=None, description=None):
+    def edit_em(self, name=None, date=None, img_url=None, description=None, status=None):
         """
         Let's the manager edit the emergency information.
         Changes can be made to the name, date, image or the description of the emergency.
@@ -72,14 +72,17 @@ class Emergency:
 
         if description is not None:
             self.description = description.strip() if description else None
+        
+        if status is not None:
+            self.status = status.strip()
 
         # Update emergency in the database
         db = get_db()
 
         try:
             db.execute(
-                "UPDATE emergencies SET emergency_name = ?, emergency_date = ?, image_url = ?, emergency_description = ? WHERE emergency_id = ?",
-                (self.name, self.date, self.img_url, self.description, self.id)
+                "UPDATE emergencies SET emergency_name = ?, emergency_date = ?, image_url = ?, emergency_description = ?, emergency_status = ? WHERE emergency_id = ?",
+                (self.name, self.date, self.img_url, self.description, self.status, self.id)
             )
             db.commit()
             return True, None
