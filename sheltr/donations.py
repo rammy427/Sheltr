@@ -26,10 +26,10 @@ def make_donation():
     emergencies = db.execute("SELECT emergency_id, emergency_name FROM emergencies ORDER BY emergency_name").fetchall()
 
     if request.method == 'POST':
-        emergency_selection = request.form.get['emergency_id']
-        amount = request.form.get['amount']
-        provider = request.form.get['provider']
-        msg = request.form.get['msg']
+        emergency_selection = request.form.get('emergency_id')
+        amount = request.form.get('amount')
+        provider = request.form.get('provider')
+        msg = request.form.get('msg')
         error = None
 
         if not emergency_selection:
@@ -41,7 +41,7 @@ def make_donation():
         else:
              donation, error = Donation.create(
                 emergency_id=emergency_selection,
-                user_id=g.user["id"],
+                user_id=g.user.id,
                 amount=amount,
                 message=msg,
             )
@@ -50,7 +50,7 @@ def make_donation():
             flash(error)
         else:
             flash('Thanks for donating!', 'success')
-            return redirect(url_for('donations.html'))
+            return redirect(url_for('donations.view'))
            
 
     return render_template('donations/make-donation.html', emergencies = emergencies)
