@@ -4,7 +4,6 @@
     <h1 class="mx-auto text-center">{% block title %}Make a Donation{% endblock %}</h1>
 {% endblock %}
 
-
 {% block content %}
 <div class="auth-wrapper">
     <div class ="auth-card">
@@ -24,7 +23,7 @@
             </div> 
             <div class="auth-field">
                 <label for="provider">Select payment provider *</label>
-                <select class="form-select" aria-label="Default select example">
+                <select name="provider" id="provider" class="form-select" aria-label="Default select example" required>
                     <option selected>Select an option</option>
                     <option value="Paypal">Paypal</option>
                     <option value="Venmo">Venmo</option>
@@ -35,6 +34,13 @@
             <div class="auth-field">
                 <label for="msg">Write a message (optional) *</label>
                 <input type="text" name="msg" id="msg" maxlength="400"> 
+            </div>
+            <div class="container py-4"></div>
+                <div class="text-center">
+                    <a href="{{ url_for('donations.make_donation') }}"> 
+                        <button class="btn btn-primary" type="submit"> Submit </button>
+                    </a>
+                </div>
             </div>
         </form>
 </div>
