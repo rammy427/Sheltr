@@ -21,11 +21,15 @@ class Emergency:
 
 
     @classmethod
-    def new_emergency(self, name, status, date, img_url = None, description = None):
+    def new_emergency(self, name, status, date=None, img_url=None, description=None):
 
         """ This function adds an emergency to the database. 
-        It is a void function. 
+        Returns (success, error_message). 
         """
+        import datetime
+
+        if date is None:
+            date = datetime.date.today()
 
         # Access the database
         db = get_db()
@@ -35,9 +39,10 @@ class Emergency:
                 (name.strip(), status, date, img_url.strip() if img_url else None, description.strip() if description else None ))
             
             db.commit()
+            return True, None
 
         except db.OperationalError:
-            print("An error has occured creating a new emergency. Please try again.")   
+            return False, "An error has occured creating a new emergency. Please try again."  
 
 
     @classmethod
