@@ -9,35 +9,39 @@
         <div class="row">
             <div class="col">
                 <a href="{{ url_for('admin.add_emergency') }}" class="btn btn-primary mt-3 d-block">Add Emergency</a>
-                <table class="table my-3">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for emergency in emergencies %}
+                {% if emergencies %}
+                    <table class="table my-3">
+                        <thead>
                             <tr>
-                                <td class="col-1">{{ emergency.name }}</td>
-                                <td class="col-1">{{ emergency.description }}</td>
-                                <td class="col-1">
-                                    {% if emergency.status %}
-                                        Active
-                                    {% else %}
-                                        Inactive
-                                    {% endif %}
-                                </td>
-                                <td class="col-1">
-                                    <a class="btn btn-primary my-1" href="{{ url_for('admin.manage_emergency', e_id=emergency.id) }}">Edit</a>
-                                    <button class="btn btn-primary btn-lg" onclick="deleteEmergency({{ emergency.id }})">Delete</button>
-                                </td>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for emergency in emergencies %}
+                                <tr>
+                                    <td class="col-1">{{ emergency.name }}</td>
+                                    <td class="col-1">{{ emergency.description }}</td>
+                                    <td class="col-1">
+                                        {% if emergency.status %}
+                                            Active
+                                        {% else %}
+                                            Inactive
+                                        {% endif %}
+                                    </td>
+                                    <td class="col-1">
+                                        <a class="btn btn-primary my-1" href="{{ url_for('admin.manage_emergency', e_id=emergency.id) }}">Edit</a>
+                                        <button class="btn btn-primary btn-lg" onclick="deleteEmergency({{ emergency.id }})">Delete</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="my-3">No emergencies found.</h3>
+                {% endif %}
             </div>
         </div>
     </div>
