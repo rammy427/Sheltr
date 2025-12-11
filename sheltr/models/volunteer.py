@@ -21,6 +21,15 @@ class Volunteer(User):
         return super().create(username, email, password, name, phone, city, role='volunteer')
 
     # Volunteer-specific methods.
+    @classmethod
+    def get_all(cls):
+        """Get all volunteers."""
+        db = get_db()
+        rows = db.execute("SELECT * FROM user WHERE role = 'volunteer'").fetchall()
+        if rows is None:
+            return None
+        return [cls._from_db_row(row) for row in rows]
+
     def get_tasks(self):
         """Get all tasks that are assigned to a volunteer."""
         if not self.tasks:
@@ -34,3 +43,20 @@ class Volunteer(User):
                 self.tasks.append(Task._from_db_row(row))
         
         return self.tasks
+    
+    def assign_task(self, task_id):
+        """Assign task to this volunteer.
+        Returns (success, error_message)."""
+        task = Task.get_by_id(task_id)
+        if not task:
+            return False, "Task not found."
+        
+        # Check if the task is already taken.
+        if task.get_volunteer():
+            return False, "Task is already taken."
+        
+        db = get_db()
+        db.execute("INSERT INTO user_task (user_id, task_id) VALUES (?, ?)",
+                   (self.id, task_id))
+        db.commit()
+        return True, None

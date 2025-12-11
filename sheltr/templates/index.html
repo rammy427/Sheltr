@@ -15,6 +15,13 @@
             <p>View and manage your account</p>
         </a>
 
+        {% if g.user.is_volunteer() %}
+            <a href="{{ url_for('shelters.view') }}" class="dashboard-card">
+                <h3>Volunteer at Shelters</h3>
+                <p>View available shelters and their tasks</p>
+            </a>
+        {% endif %}
+
         <a href="{{ url_for('emergency.view') }}" class="dashboard-card">
             <h3>Emergencies</h3>
             <p>View emergency information</p>
@@ -31,10 +38,10 @@
         </a>
 
         {% if g.user.is_manager() %}
-        <div class="dashboard-card dashboard-card-manager">
+        <a href="{{ url_for('admin.view') }}" class="dashboard-card dashboard-card-manager">
             <h3>Manager Tools</h3>
             <p>Access manager features</p>
-        </div>
+        </a>
         {% endif %}
     </div>
 </div>

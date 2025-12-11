@@ -53,6 +53,9 @@ def create_app(test_config=None):
     from . import tasks
     app.register_blueprint(tasks.bp)
 
+    from . import shelters
+    app.register_blueprint(shelters.bp)
+
     from . import donations
     app.register_blueprint(donations.bp)
 
@@ -62,7 +65,7 @@ def create_app(test_config=None):
     from . import profile
     app.register_blueprint(profile.bp)
 
-    from . import disasters
-    app.register_blueprint(disasters.bp)
+    from . import admin
+    app.register_blueprint(admin.bp)
     
     return app

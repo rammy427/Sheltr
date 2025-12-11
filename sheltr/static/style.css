@@ -81,6 +81,19 @@ nav ul:empty {
   display: none;
 }
 
+.a-div{
+  padding: 15px;
+  margin: 15px;
+  font-size: 15px;
+  color: #fff;
+  background-color: var(--teal);
+}
+
+.a-div:hover{
+  background-color: var(--darker_teal);
+  text-decoration: none;
+}
+
 .grid-container {
   display: grid;
   width: 80%;
@@ -90,29 +103,33 @@ nav ul:empty {
   padding: 20px;
 }
 
-.inner-grid-container {
+.inner-grid-container-single {
   display: grid;
   place-items: center;
   text-align: center;
   grid-template-columns: 400px 400px;
+  font-family: sans-serif;
+  font-size: 15px;
+  color: #fff;
+  border: 5px solid var(--charcoal);
+  background-color: var(--teal);
   column-gap: 80px;
   padding: 30px;
   margin: 10px;
 }
 
-.a-div{
+.inner-grid-container {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  grid-template-columns: 400px 400px;
   font-family: sans-serif;
   font-size: 15px;
   color: #fff;
   background-color: var(--teal);
-  border: 5px solid var(--charcoal);
-  padding: 10px;
+  column-gap: 80px;
+  padding: 30px;
   margin: 10px;
-}
-
-.a-div:hover{
-  background-color: var(--darker_teal);
-  text-decoration: none;
 }
 
 .button{
@@ -187,6 +204,33 @@ img{
   text-align: center;
   gap: 1rem;
   padding: 1rem;
+  overflow-y: auto;
+}
+
+@media (max-height: 600px) {
+  .auth-wrapper {
+    justify-content: flex-start;
+    padding-top: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 24px;
+  }
+
+  .auth-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .auth-form {
+    gap: 0.75rem;
+  }
+
+  .auth-field input,
+  .auth-field select {
+    padding: 0.7rem 0.85rem;
+  }
 }
 
 .auth-wrapper > :not(.auth-card) {

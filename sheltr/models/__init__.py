@@ -9,5 +9,6 @@ from .manager import Manager
 from .emergency import Emergency
 from .task import Task
 from .donation import Donation
+from .shelter import Shelter
 
-__all__ = ['User', 'Volunteer', 'Manager', 'Emergency', 'Task', 'Donation']
+__all__ = ['User', 'Volunteer', 'Manager', 'Emergency', 'Task','Shelter','Donation']
