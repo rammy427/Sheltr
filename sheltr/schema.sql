@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS user_task;
 DROP TABLE IF EXISTS shelters_of_emergency;
 DROP TABLE IF EXISTS task;
-DROP TABLE IF EXISTS shelters; 
+DROP TABLE IF EXISTS shelters;
+DROP TABLE IF EXISTS donation;
 DROP TABLE IF EXISTS emergencies; 
 DROP TABLE IF EXISTS user;
 
@@ -62,4 +63,16 @@ CREATE TABLE user_task (
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (task_id) REFERENCES task(task_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, task_id)
+);
+
+CREATE TABLE donation (
+    donation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    emergency_id INTEGER,
+    user_id INTEGER,
+    donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    donation_quantity DECIMAL(19,2), 
+    payment_process_provider TEXT,
+    donation_message VARCHAR(400),
+    FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
