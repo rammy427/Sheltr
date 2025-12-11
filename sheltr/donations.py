@@ -1,4 +1,4 @@
-from flask import (Blueprint, render_template, request, flash, redirect, url_for)
+from flask import (Blueprint, render_template, g, request, flash, redirect, url_for)
 from sheltr.models import Donation
 from sheltr.auth import login_required
 from  sheltr.db import get_db
@@ -21,6 +21,10 @@ def view():
 @bp.route('/make-donation', methods = ('GET', 'POST'))
 @login_required
 def make_donation():
+
+    db = get_db()
+    emergencies = db.execute("SELECT emergency_id, emergency_name FROM emergencies ORDER BY emergency_name").fetchall()
+
     if request.method == 'POST':
         emergency_selection = request.form.get['emergency_id']
         amount = request.form.get['amount']
@@ -34,17 +38,22 @@ def make_donation():
             error = 'Required: Select an amount to donate'
         if not provider:
             error = 'Required: Select payment service provider'
-        
-        if error is not None:
+        else:
+             donation, error = Donation.create(
+                emergency_id=emergency_selection,
+                user_id=g.user["id"],
+                amount=amount,
+                message=msg,
+            )
+           
+        if error:
             flash(error)
         else:
-            db = get_db()
-            db.execute('INSERT INTO donation (emergency_id, user_id, donation_quantity, donation_message) VALUES(?, ?, ?, ?)', (emergency_selection, g.user['id'], amount, msg))
+            flash('Thanks for donating!', 'success')
+            return redirect(url_for('donations.html'))
+           
 
-            db.commit()
-            return(redirect(url_for('donations.make_donation')))
-        
-    return render_template('donations/make-donation.html')
+    return render_template('donations/make-donation.html', emergencies = emergencies)
 
 
 

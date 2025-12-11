@@ -7,11 +7,16 @@
 
 {% block content %}
 <div class="auth-wrapper">
-    <div class ="auth-card"
+    <div class ="auth-card">
         <form method ="post" class = "auth-card">
             <div class="auth-field">
                 <label for="emergency_id">Select Emergency *</label>
-                <input type = "text" name="emergency" id="emergency_id" maxlength="100"> 
+                <select name="emergency_id" id="emergency_id" class="form-select" required>
+                    <option value="" disabled selected>Select an Emergency</option>
+                    {% for emergency in emergencies%}
+                    <option value="{{ emergency['emergency_id']}}">{{ emergency['emergency_name']}}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="auth-field">
                 <label for="amount">Donation Amount *</label>
