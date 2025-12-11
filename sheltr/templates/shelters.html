@@ -20,10 +20,10 @@
                     <tbody>
                         {% for shelter in shelters %}
                             <tr>
-                                <td class="col-2">{{ shelter.name }}</td>
-                                <td class="col-2">{{ shelter.location }}</td>
-                                <td class="col-4">{{ shelter.description }}</td>
-                                <td>
+                                <td class="col-1">{{ shelter.name }}</td>
+                                <td class="col-1">{{ shelter.location }}</td>
+                                <td class="col-1">{{ shelter.description }}</td>
+                                <td class="col-1">
                                     <a href="{{ url_for('shelters.shelter', shelter_id=shelter.id) }}" class="btn btn-primary">Volunteer</a>
                                 </td>
                             </tr>
