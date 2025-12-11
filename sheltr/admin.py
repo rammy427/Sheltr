@@ -80,7 +80,8 @@ def add_task(shelter_id):
 @bp.route('/emergencies')
 @manager_required
 def emergencies():
-    return f"This will show the list of all emergencies for the manager."
+    emergencies = Emergency.get_all()
+    return render_template('admin/admin-emergencies.html', emergencies=emergencies)
 
 @bp.route('/emergencies/<int:e_id>')
 @manager_required
