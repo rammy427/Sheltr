@@ -44,10 +44,12 @@
                 <h2> {{ e.date }} </h2>
             </div>
 
-            <div style= "text-align: center" >
-                <img src = {{ e.img_url}}><br>
-
-            </div>
+            {% if emergency.img_url %}
+               
+                <div style= "text-align: center" >
+                    <img src = {{ e.img_url}}><br>
+                </div>
+            {% endif %}
 
         </div>
     </a>

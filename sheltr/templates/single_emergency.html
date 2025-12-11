@@ -28,7 +28,10 @@
             </div>
 
             <div style= "text-align: center" >
+
+                {% if emergency.img_url %}
                 <img src = {{ emergency.img_url}}><br>
+                {% endif %}
 
                 <button class="button button-options">Donate</button><br>
 
@@ -36,6 +39,10 @@
 
         </div>
 
+    </div>
+
+    <div class="container mx-auto text-center">
+        <iframe src = 'Sheltr/sheltr/shelter_map.html' title = 'Shelters for an Emergency'></iframe>
     </div>
     
     <div class="container mx-auto text-center">

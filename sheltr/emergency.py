@@ -2,6 +2,7 @@ from flask import (Blueprint, render_template, g)
 from sheltr.models import Emergency
 from sheltr.auth import login_required
 from sheltr.db import get_db
+import folium
 
 bp = Blueprint('emergency', __name__, url_prefix = '/emergency')
 
@@ -24,7 +25,13 @@ def specific_emergency(e_id):
 
     emergency = Emergency.get_one_by_id(e_id)
     shelters = Emergency.assigned_shelters(e_id)
+    render_map()
     return render_template('single_emergency.html', emergency = emergency, shelters = shelters)
 
+@bp.route('/<int:e_id>')
+@login_required
 
+def render_map():
     
+    shelter_map = folium.Map(location = [18.2208, 66.5901], tiles = 'OpenStreetMap')
+    shelter_map.save('../../shelter_map.html')
