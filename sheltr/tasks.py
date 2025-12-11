@@ -30,7 +30,7 @@ def update_status():
     task.update_status(new_status)
     return jsonify(success=True)
 
-@bp.route('/<int:task_id>/delete', methods=["DELETE"])
+@bp.route('/<int:task_id>', methods=["DELETE"])
 @manager_required
 def delete_task(task_id):
     task = Task.get_by_id(task_id)

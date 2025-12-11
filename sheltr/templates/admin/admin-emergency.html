@@ -87,7 +87,7 @@
     <script>
         function linkShelter(emergency_id, shelter_id)
         {
-            fetch(`/emergency/${emergency_id}/${shelter_id}/add`,
+            fetch(`/emergency/${emergency_id}/${shelter_id}`,
             {
                 method: "POST",
                     headers:
@@ -98,7 +98,7 @@
         }
         function unlinkShelter(emergency_id, shelter_id)
         {
-            fetch(`/emergency/${emergency_id}/${shelter_id}/remove`,
+            fetch(`/emergency/${emergency_id}/${shelter_id}`,
             {
                 method: "DELETE",
                     headers:
