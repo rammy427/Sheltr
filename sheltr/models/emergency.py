@@ -139,19 +139,46 @@ class Emergency:
             return None
         return [self._from_db_row(row) for row in rows]
     
-
     @classmethod
     def assigned_shelters(self, e_id):
 
         """Get all of the shelters for an emergency."""
 
         db = get_db()
-        rows = db.execute('SELECT * FROM shelters JOIN shelters_of_emergency WHERE shelters.shelter_id = shelters_of_emergency.shelter_id AND emergency_id = ?', (e_id,)).fetchall()
+        rows = db.execute('''SELECT *
+                          FROM shelters JOIN shelters_of_emergency
+                          WHERE shelters.shelter_id = shelters_of_emergency.shelter_id
+                          AND emergency_id = ?''', (e_id,)).fetchall()
 
         if rows is None:
             return None
         return [Shelter._from_db_row(row) for row in rows]
 
+    def assign_shelter(self, shelter_id):
+        """Assign shelter to this emergency.
+        Returns (success, error_message)."""
+        shelter = Shelter.get_by_id(shelter_id)
+        if not shelter:
+            return False, "Shelter not found."
+        
+        from datetime import date
+        cur_date = date.today()
+        db = get_db()
+        db.execute("INSERT INTO shelters_of_emergency (emergency_id, shelter_id, starting_date) VALUES (?, ?, ?)", (self.id, shelter_id, cur_date))
+        db.commit()
+        return True, None
+    
+    def remove_shelter(self, shelter_id):
+        """Unlink shelter from this emergency.
+        Returns (success, error_message)."""
+        shelter = Shelter.get_by_id(shelter_id)
+        if not shelter:
+            return False, "Shelter not found."
+        
+        db = get_db()
+        db.execute("DELETE FROM shelters_of_emergency WHERE emergency_id = ? AND shelter_id = ?", (self.id, shelter_id))
+        db.commit()
+        return True, None
 
     def to_dict(self):
 
