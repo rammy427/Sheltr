@@ -34,4 +34,4 @@ def specific_emergency(e_id):
 def render_map():
     
     shelter_map = folium.Map(location = [18.2208, 66.5901], tiles = 'OpenStreetMap')
-    shelter_map.save('../../shelter_map.html')
+    shelter_map.save('sheltr/templates/shelter_map.html')
