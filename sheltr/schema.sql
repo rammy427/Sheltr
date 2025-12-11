@@ -73,6 +73,6 @@ CREATE TABLE donation (
     donation_quantity DECIMAL(19,2), 
     payment_process_provider TEXT,
     donation_message VARCHAR(400),
-    FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id),
+    FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
