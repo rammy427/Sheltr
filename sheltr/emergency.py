@@ -15,7 +15,7 @@ def view():
     return render_template('emergency.html', emergency = list_emergencies)
 
 
-@bp.route('/<int:e_id>')
+@bp.route('/<int:e_id>', methods=['GET'])
 @login_required
 
 def specific_emergency(e_id):
@@ -24,6 +24,16 @@ def specific_emergency(e_id):
     emergency = Emergency.get_one_by_id(e_id)
     shelters = Emergency.assigned_shelters(e_id)
     return render_template('single_emergency.html', emergency = emergency, shelters = shelters)
+
+@bp.route('/<int:e_id>', methods=['DELETE'])
+@manager_required
+def delete_emergency(e_id):
+    """Delete the specified emergency and unlink all its shelters."""
+    emergency = Emergency.get_one_by_id(e_id)
+    if emergency:
+        Emergency.remove_em(e_id)
+    return '', 204
+
 
 @bp.route('<int:e_id>/<int:s_id>/add', methods=["POST"])
 @manager_required

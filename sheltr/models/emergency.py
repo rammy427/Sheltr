@@ -105,7 +105,7 @@ class Emergency:
         # Remove an emergency from the database
         db = get_db()
 
-        db.execute('DELETE * FROM emergencies WHERE emergency_id = ?', (e_id))
+        db.execute('DELETE FROM emergencies WHERE emergency_id = ?', (e_id,))
         db.commit()
 
 

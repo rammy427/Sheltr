@@ -31,7 +31,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="col-1">
-                                    <a class="btn btn-primary" href="{{ url_for('admin.manage_emergency', e_id=emergency.id) }}">Edit</a>
+                                    <a class="btn btn-primary my-1" href="{{ url_for('admin.manage_emergency', e_id=emergency.id) }}">Edit</a>
+                                    <button class="btn btn-primary btn-lg" onclick="deleteEmergency({{ emergency.id }})">Delete</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -40,4 +41,17 @@
             </div>
         </div>
     </div>
+    <script>
+        function deleteEmergency(emergency_id)
+        {
+            fetch(`/emergency/${emergency_id}`,
+            {
+                method: 'DELETE',
+                headers:
+                {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }).then(res => location.reload());
+        }
+    </script>
 {% endblock %}
