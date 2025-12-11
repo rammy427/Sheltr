@@ -60,6 +60,6 @@ CREATE TABLE user_task (
     user_id INTEGER,
     task_id INTEGER UNIQUE,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (task_id) REFERENCES task(task_id),
+    FOREIGN KEY (task_id) REFERENCES task(task_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, task_id)
 );
