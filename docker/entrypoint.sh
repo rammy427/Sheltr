@@ -57,9 +57,9 @@ with app.app_context():
 
     # Insert test emergencies
     emergencies = [
-        ('Hurricane Maria', 1, '2024-09-15', 'https://example.com/hurricane.jpg', 'Category 4 hurricane approaching Florida.'),
-        ('Tropical Storm Alex', 0, '2024-06-10', 'https://example.com/storm.jpg', 'Tropical storm that caused flooding. Now resolved.'),
-        ('Wildfire Season 2024', 1, '2024-03-01', 'https://example.com/wildfire.jpg', 'Ongoing wildfire threats in rural areas.'),
+        ('Hurricane Maria', 1, '2024-09-15', 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80', 'Category 4 hurricane approaching Florida.'),
+        ('Tropical Storm Alex', 0, '2024-06-10', 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&q=80', 'Tropical storm that caused flooding. Now resolved.'),
+        ('Wildfire Season 2024', 1, '2024-03-01', 'https://images.unsplash.com/photo-1523895665936-7bfe172b757d?w=800&q=80', 'Ongoing wildfire threats in rural areas.'),
     ]
     for e in emergencies:
         db.execute('INSERT INTO emergencies (emergency_name, emergency_status, emergency_date, image_url, emergency_description) VALUES (?, ?, ?, ?, ?)', e)

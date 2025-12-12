@@ -7,29 +7,23 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto text-center">
-        <div class="row">
-            <div class="col">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Sort by Date
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <label class="dropdown-item form-check-label" role="button">
-                                <input class="form-check-input" type="checkbox"> Ascending
-                            </label>
-                        </li>
-                        <li>
-                            <label class="dropdown-item form-check-label" role="button">
-                                <input class="form-check-input" type="checkbox"> Descending
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-                    </table>
-            </div>
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input
+                type="text"
+                id="emergency-search"
+                class="search-input"
+                placeholder="Search emergencies..."
+                autocomplete="off"
+            >
+            <span class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </span>
         </div>
+        <p id="search-results-count" class="search-results-count"></p>
     </div>
 
 {% if emergency %}
@@ -37,12 +31,14 @@
 
         {% for e in emergency %}
 
-        <a class="a-div" href="{{ url_for('emergency.specific_emergency', e_id = e.id) }}">
-            <div class= "inner-grid-container">
+        <a class="a-div emergency-card" href="{{ url_for('emergency.specific_emergency', e_id = e.id) }}"
+           data-name="{{ e.name|lower }}"
+           data-description="{{ e.description|lower if e.description else '' }}">
+            <div class="inner-grid-container">
 
                 <div>
-                    <h1> {{ e.name }} </h1><br>
-                    <h2> {{ e.date }} </h2>
+                    <h1>{{ e.name }}</h1><br>
+                    <h2>{{ e.date }}</h2>
                 </div>
 
             {% if emergency.img_url %}
@@ -58,6 +54,41 @@
 
     </div>
 {% else %}
-    <p class="my-3 mx-auto">No emergencies found.</p>
+    <p class="my-3 mx-auto no-emergencies-message">No emergencies found.</p>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('emergency-search');
+    const resultsCount = document.getElementById('search-results-count');
+    const cards = document.querySelectorAll('.emergency-card');
+    const noEmergenciesMsg = document.querySelector('.no-emergencies-message');
+
+    if (!searchInput || cards.length === 0) return;
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(function(card) {
+            const name = card.dataset.name || '';
+            const description = card.dataset.description || '';
+            const matches = name.includes(query) || description.includes(query);
+
+            if (matches) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (query) {
+            resultsCount.textContent = visibleCount + ' result' + (visibleCount !== 1 ? 's' : '') + ' found';
+        } else {
+            resultsCount.textContent = '';
+        }
+    });
+});
+</script>
 {% endblock %}

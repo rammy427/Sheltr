@@ -64,9 +64,9 @@ def init_db():
         )
 
     emergencies = [
-        ("Hurricane Maria", 1, "2024-09-15", "https://example.com/hurricane.jpg", "Category 4 hurricane approaching the Florida coast. Mandatory evacuations in coastal areas."),
-        ("Tropical Storm Alex", 0, "2024-06-10", "https://example.com/storm.jpg", "Tropical storm that caused flooding in northern Florida. Now resolved."),
-        ("Wildfire Season 2024", 1, "2024-03-01", "https://example.com/wildfire.jpg", "Ongoing wildfire threats in rural areas. Multiple shelters activated."),
+        ("Hurricane Maria", 1, "2024-09-15", "https://images.pexels.com/photos/1446076/pexels-photo-1446076.jpeg?auto=compress&cs=tinysrgb&w=800", "Category 4 hurricane approaching the Florida coast. Mandatory evacuations in coastal areas."),
+        ("Tropical Storm Alex", 0, "2024-06-10", "https://images.pexels.com/photos/1739855/pexels-photo-1739855.jpeg?auto=compress&cs=tinysrgb&w=800", "Tropical storm that caused flooding in northern Florida. Now resolved."),
+        ("Wildfire Season 2024", 1, "2024-03-01", "https://images.pexels.com/photos/51951/forest-fire-fire-smoke-conservation-51951.jpeg?auto=compress&cs=tinysrgb&w=800", "Ongoing wildfire threats in rural areas. Multiple shelters activated."),
     ]
 
     for e in emergencies:
