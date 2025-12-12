@@ -262,6 +262,11 @@ class Donation:
   
     @classmethod
     def from_row(cls, row):
+        # Handle payment_process_provider which may not exist in older schemas
+        try:
+            provider = row["payment_process_provider"]
+        except (KeyError, IndexError):
+            provider = None
         return cls(
             donation_id=row["donation_id"],
             emergency_id=row["emergency_id"],
@@ -269,7 +274,7 @@ class Donation:
             donation_date=row["donation_date"],
             donation_quantity=Decimal(str(row["donation_quantity"])),
             donation_message=row["donation_message"],
-            payment_process_provider=row.get("payment_process_provider"),
+            payment_process_provider=provider,
         )
     
     def to_dict(self):
