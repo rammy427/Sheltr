@@ -49,10 +49,11 @@ def render_map(e_id):
     shelters = Emergency.assigned_shelters(e_id)
 
     for s in shelters:
+        name = s.name
         coords = s.location.split(',')
 
         # Parse string
-        name = coords[0]
+        name = name
         lat = float(coords[1])
         long = float(coords[2])
 
