@@ -49,10 +49,8 @@
                 <button class="btn btn-primary"> Donate </button>
             </a>
         </div>
-        <div class="text-center">
-            <a href="#">
-                <button type="button" class="btn btn-link">See your donation history</button>
-            </a>
+        <div class="text-center py-3">
+            <a href="{{ url_for('donations.donation_history')}}" class="btn btn-secondary">See your donation history</a>
         </div>
 
     </div>
