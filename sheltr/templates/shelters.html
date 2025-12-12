@@ -1,36 +1,61 @@
 {% extends 'base.html' %}
 
+{% block title %}Shelters{% endblock %}
+
 {% block header %}
-    <h1 class="mx-auto text-center">{% block title %}View Shelters{% endblock %}</h1>
+    <h1 class="mx-auto text-center">Shelters</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Find shelters and volunteer opportunities</p>
 {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto text-center">
-        <div class="row">
-            <div class="col">
-                <table class="table">
-                    <thead>
+    <div class="container" style="max-width: 1100px; margin: 0 auto;">
+        <h2 style="color: #334155; margin-bottom: 1.5rem; font-weight: 600;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -5px; color: #667eea;">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Available Shelters
+        </h2>
+
+        {% if shelters %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shelter in shelters %}
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Actions</th>
+                            <td style="font-weight: 500;">{{ shelter.name }}</td>
+                            <td>{{ shelter.location }}</td>
+                            <td>{{ shelter.description }}</td>
+                            <td>
+                                <a href="{{ url_for('shelters.shelter', shelter_id=shelter.id) }}" class="btn btn-primary btn-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    Volunteer
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for shelter in shelters %}
-                            <tr>
-                                <td class="col-1">{{ shelter.name }}</td>
-                                <td class="col-1">{{ shelter.location }}</td>
-                                <td class="col-1">{{ shelter.description }}</td>
-                                <td class="col-1">
-                                    <a href="{{ url_for('shelters.shelter', shelter_id=shelter.id) }}" class="btn btn-primary">Volunteer</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: #64748b;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; opacity: 0.5;">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <p style="margin: 0; font-size: 1.1rem;">No shelters available at this time.</p>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports Dashboard{% endblock %}
+
+{% block header %}
+    <h1 class="mx-auto text-center">Reports Dashboard</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Platform statistics and analytics</p>
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="max-width: 1200px; margin: 0 auto;">
+        <!-- Overview Statistics Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+            <!-- Total Emergencies Card -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; font-size: 0.9rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Emergencies</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">{{ total_emergencies }}</div>
+                <div style="font-size: 0.85rem; color: #64748b;">
+                    <span style="color: #22c55e; font-weight: 600;">{{ active_emergencies }} Active</span> /
+                    <span style="color: #94a3b8;">{{ inactive_emergencies }} Inactive</span>
+                </div>
+            </div>
+
+            <!-- Total Shelters Card -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; font-size: 0.9rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Shelters</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <div style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">{{ total_shelters }}</div>
+                <div style="font-size: 0.85rem; color: #64748b;">Total shelters registered</div>
+            </div>
+
+            <!-- Total Volunteers Card -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; font-size: 0.9rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Volunteers</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">{{ total_volunteers }}</div>
+                <div style="font-size: 0.85rem; color: #64748b;">
+                    <span style="color: #667eea; font-weight: 600;">{{ total_managers }} Managers</span>
+                </div>
+            </div>
+
+            <!-- Total Donations Card -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; font-size: 0.9rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Donations</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <div style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">${{ "%.2f"|format(total_donation_amount|float) }}</div>
+                <div style="font-size: 0.85rem; color: #64748b;">
+                    <span style="color: #22c55e; font-weight: 600;">{{ total_donations }} donations</span> received
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Statistics Section -->
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2.5rem;">
+            <h2 style="color: #334155; margin: 0 0 1.5rem 0; font-weight: 600; font-size: 1.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px; color: #667eea;">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Task Statistics
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #667eea;">{{ total_tasks }}</div>
+                    <div style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Total Tasks</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #22c55e;">{{ completed_tasks }}</div>
+                    <div style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Completed</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;">{{ in_progress_tasks }}</div>
+                    <div style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">In Progress</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">{{ pending_tasks }}</div>
+                    <div style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Pending</div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            {% if total_tasks > 0 %}
+            <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Task Completion</span>
+                    <span style="font-size: 0.875rem; color: #1e293b; font-weight: 600;">{{ "%.1f"|format((completed_tasks / total_tasks * 100)|float) }}%</span>
+                </div>
+                <div style="background: #e2e8f0; border-radius: 9999px; height: 12px; overflow: hidden;">
+                    <div style="background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%); height: 100%; width: {{ (completed_tasks / total_tasks * 100)|float }}%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Two-Column Layout for Tables -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+            <!-- Recent Donations Table -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h2 style="color: #334155; margin: 0 0 1.5rem 0; font-weight: 600; font-size: 1.25rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px; color: #22c55e;">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Recent Donations
+                </h2>
+
+                {% if recent_donations %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Donor</th>
+                                <th scope="col">Emergency</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donation in recent_donations %}
+                            <tr>
+                                <td style="font-weight: 500;">{{ donation.username }}</td>
+                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ donation.emergency_name }}</td>
+                                <td style="color: #22c55e; font-weight: 600;">${{ "%.2f"|format(donation.donation_quantity|float) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 2rem; color: #64748b;">
+                    <p style="margin: 0;">No donations yet.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Top Emergencies by Donations Table -->
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h2 style="color: #334155; margin: 0 0 1.5rem 0; font-weight: 600; font-size: 1.25rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px; color: #f59e0b;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Top Emergencies by Donations
+                </h2>
+
+                {% if top_emergencies %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Emergency</th>
+                                <th scope="col">Count</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emergency in top_emergencies %}
+                            <tr>
+                                <td style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ emergency.emergency_name }}</td>
+                                <td><span class="badge bg-primary">{{ emergency.donation_count }}</span></td>
+                                <td style="color: #22c55e; font-weight: 600;">${{ "%.2f"|format(emergency.total_amount|float) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 2rem; color: #64748b;">
+                    <p style="margin: 0;">No emergencies with donations yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('admin.view') }}" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Back to Manager Tools
+            </a>
+        </div>
+    </div>
+{% endblock %}

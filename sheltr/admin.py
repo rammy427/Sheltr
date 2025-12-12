@@ -1,6 +1,7 @@
 from flask import (Blueprint, g, render_template, request, flash, redirect, url_for)
 from sheltr.auth import manager_required
 from sheltr.models import Shelter, Task, Volunteer, Emergency
+from sheltr.db import get_db
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/')
@@ -124,5 +125,70 @@ def add_emergency():
             return redirect(url_for('admin.emergencies'))
         else:
             flash(error, 'error')
-    
+
     return render_template('admin/admin-emergency.html')
+
+@bp.route('/reports')
+@manager_required
+def reports():
+    db = get_db()
+
+    # Query emergency statistics
+    total_emergencies = db.execute('SELECT COUNT(*) as count FROM emergencies').fetchone()['count']
+    active_emergencies = db.execute('SELECT COUNT(*) as count FROM emergencies WHERE emergency_status = 1').fetchone()['count']
+    inactive_emergencies = total_emergencies - active_emergencies
+
+    # Query shelter statistics
+    total_shelters = db.execute('SELECT COUNT(*) as count FROM shelters').fetchone()['count']
+
+    # Query user statistics
+    total_volunteers = db.execute("SELECT COUNT(*) as count FROM user WHERE role = 'volunteer'").fetchone()['count']
+    total_managers = db.execute("SELECT COUNT(*) as count FROM user WHERE role = 'manager'").fetchone()['count']
+
+    # Query task statistics
+    total_tasks = db.execute('SELECT COUNT(*) as count FROM task').fetchone()['count']
+    completed_tasks = db.execute("SELECT COUNT(*) as count FROM task WHERE status = 'completed'").fetchone()['count']
+    pending_tasks = db.execute("SELECT COUNT(*) as count FROM task WHERE status = 'pending'").fetchone()['count']
+    in_progress_tasks = db.execute("SELECT COUNT(*) as count FROM task WHERE status = 'in_progress'").fetchone()['count']
+
+    # Query donation statistics
+    total_donations = db.execute('SELECT COUNT(*) as count FROM donation').fetchone()['count']
+    total_donation_amount = db.execute('SELECT COALESCE(SUM(donation_quantity), 0) as total FROM donation').fetchone()['total']
+
+    # Query recent donations with donor username and emergency name
+    recent_donations = db.execute('''
+        SELECT d.donation_quantity, d.donation_date, u.username, e.emergency_name
+        FROM donation d
+        JOIN user u ON d.user_id = u.user_id
+        JOIN emergencies e ON d.emergency_id = e.emergency_id
+        ORDER BY d.donation_date DESC
+        LIMIT 5
+    ''').fetchall()
+
+    # Query top emergencies by donation amount
+    top_emergencies = db.execute('''
+        SELECT e.emergency_name, COUNT(d.donation_id) as donation_count,
+               COALESCE(SUM(d.donation_quantity), 0) as total_amount
+        FROM emergencies e
+        LEFT JOIN donation d ON e.emergency_id = d.emergency_id
+        GROUP BY e.emergency_id, e.emergency_name
+        ORDER BY total_amount DESC
+        LIMIT 5
+    ''').fetchall()
+
+    return render_template('admin/reports.html',
+        total_emergencies=total_emergencies,
+        active_emergencies=active_emergencies,
+        inactive_emergencies=inactive_emergencies,
+        total_shelters=total_shelters,
+        total_volunteers=total_volunteers,
+        total_managers=total_managers,
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        in_progress_tasks=in_progress_tasks,
+        total_donations=total_donations,
+        total_donation_amount=total_donation_amount,
+        recent_donations=recent_donations,
+        top_emergencies=top_emergencies
+    )

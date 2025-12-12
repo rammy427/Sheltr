@@ -58,22 +58,54 @@ Sheltr/
 │   ├── __init__.py         # App factory (create_app)
 │   ├── db.py               # Database utilities
 │   ├── schema.sql          # Database schema
-│   ├── auth.py             # Auth blueprint
-│   ├── jwt_utils.py        # JWT utilities
+│   ├── auth.py             # Auth blueprint (login, register, JWT)
+│   ├── jwt_utils.py        # JWT token utilities
+│   ├── admin.py            # Admin blueprint (manager-only routes)
 │   ├── tasks.py            # Tasks blueprint
+│   ├── shelters.py         # Shelters blueprint
 │   ├── profile.py          # Profile blueprint
-│   ├── emergency.py        # Emergency blueprint
+│   ├── emergency.py        # Emergency blueprint (with map integration)
 │   ├── donations.py        # Donations blueprint
-│   ├── disasters.py        # Disasters blueprint
 │   ├── models/             # Data models
+│   │   ├── __init__.py     # Model exports
+│   │   ├── user.py         # User base model
+│   │   ├── volunteer.py    # Volunteer model (extends User)
+│   │   ├── manager.py      # Manager model (extends User)
+│   │   ├── task.py         # Task model
+│   │   ├── shelter.py      # Shelter model
+│   │   ├── emergency.py    # Emergency model
+│   │   └── donation.py     # Donation model
 │   ├── templates/          # Jinja2 templates
+│   │   ├── base.html       # Base layout
+│   │   ├── index.html      # Home page
+│   │   ├── auth/           # Auth templates
+│   │   ├── admin/          # Admin templates
+│   │   ├── profile/        # Profile templates
+│   │   ├── donations/      # Donation templates
+│   │   └── ...
 │   └── static/             # CSS, JS, images
+│       └── style.css       # Custom styles
 ├── docker/                 # Docker configuration
 ├── docs/                   # Documentation
+├── tests/                  # Test suite
 ├── instance/               # Instance folder (database)
 ├── ignition.py             # Development launcher
 └── requirements.txt        # Python dependencies
 ```
+
+---
+
+## Blueprints Overview
+
+| Blueprint | Prefix | Description |
+|-----------|--------|-------------|
+| `auth` | `/auth` | Authentication (login, register, logout, JWT refresh) |
+| `admin` | `/admin` | Manager-only routes (shelters, tasks, emergencies, reports) |
+| `tasks` | `/tasks` | Volunteer task management |
+| `shelters` | `/shelters` | Shelter viewing and task registration |
+| `emergency` | `/emergency` | Emergency viewing with interactive maps |
+| `donations` | `/donations` | Donation creation and history |
+| `profile` | `/profile` | User profile management |
 
 ---
 
@@ -289,26 +321,25 @@ def get_user_by_id(user_id: int) -> User | None:
 
 ### Test Suite Overview
 
-The project includes a comprehensive test suite with **309 tests** achieving **100% code coverage**.
+The project includes a comprehensive test suite.
 
 ```
 tests/
 ├── conftest.py                    # Shared fixtures and test helpers
-├── test_auth.py                   # Authentication blueprint (40 tests)
-├── test_db.py                     # Database operations (23 tests)
-├── test_disasters.py              # Disasters blueprint (3 tests)
-├── test_donations.py              # Donations blueprint (3 tests)
-├── test_emergency_routes.py       # Emergency routes (18 tests)
-├── test_factory.py                # App factory (10 tests)
-├── test_jwt_utils.py              # JWT utilities (29 tests)
-├── test_profile.py                # Profile blueprint (25 tests)
-├── test_tasks.py                  # Tasks blueprint (17 tests)
+├── test_auth.py                   # Authentication blueprint
+├── test_db.py                     # Database operations
+├── test_donations.py              # Donations blueprint
+├── test_emergency_routes.py       # Emergency routes
+├── test_factory.py                # App factory
+├── test_jwt_utils.py              # JWT utilities
+├── test_profile.py                # Profile blueprint
+├── test_tasks.py                  # Tasks blueprint
 └── test_models/
-    ├── test_user.py               # User model (59 tests)
-    ├── test_volunteer.py          # Volunteer model (11 tests)
-    ├── test_manager.py            # Manager model (10 tests)
-    ├── test_task.py               # Task model (22 tests)
-    └── test_emergency.py          # Emergency model (29 tests)
+    ├── test_user.py               # User model
+    ├── test_volunteer.py          # Volunteer model
+    ├── test_manager.py            # Manager model
+    ├── test_task.py               # Task model
+    └── test_emergency.py          # Emergency model
 ```
 
 ### Running Tests
@@ -374,26 +405,6 @@ Test schema and data integrity:
 - Foreign key relationships
 - Timestamp handling
 - CLI commands (`flask init-db`)
-
-### Coverage Report
-
-| Module | Coverage | Description |
-|--------|----------|-------------|
-| `__init__.py` | 100% | App factory |
-| `auth.py` | 100% | Authentication routes |
-| `db.py` | 100% | Database connection management |
-| `disasters.py` | 100% | Disasters routes |
-| `donations.py` | 100% | Donations routes |
-| `emergency.py` | 100% | Emergency routes |
-| `jwt_utils.py` | 100% | JWT utilities |
-| `profile.py` | 100% | Profile routes |
-| `tasks.py` | 100% | Task routes |
-| `models/emergency.py` | 100% | Emergency model |
-| `models/manager.py` | 100% | Manager model |
-| `models/task.py` | 100% | Task model |
-| `models/user.py` | 100% | User model |
-| `models/volunteer.py` | 100% | Volunteer model |
-| **Overall** | **100%** | |
 
 ### Writing New Tests
 
@@ -562,6 +573,20 @@ For CI/CD pipelines, use:
 - name: Upload coverage
   uses: codecov/codecov-action@v3
 ```
+
+---
+
+## Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| Flask | Web framework |
+| Flask-Bootstrap5 | Bootstrap 5 integration |
+| PyJWT | JWT token handling |
+| Werkzeug | Password hashing (PBKDF2) |
+| Folium | Interactive maps |
+| pytest | Testing framework |
+| pytest-cov | Coverage reporting |
 
 ---
 

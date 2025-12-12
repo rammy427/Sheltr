@@ -3,29 +3,36 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Sheltr - Emergency Relief & Volunteer Management Platform">
         <title>{% block title %}{% endblock %} - Sheltr</title>
+
+        <!-- Google Fonts - Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
         {{ bootstrap.load_css() }}
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url_for('index') }}">Sheltr</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ url_for('emergency.view') }}">Emergencies</a>
+                            <a class="nav-link" href="{{ url_for('emergency.view') }}">Emergencies</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ url_for('tasks.view') }}">Tasks</a>
+                            <a class="nav-link" href="{{ url_for('tasks.view') }}">Tasks</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{ url_for('donations.view') }}">Donations</a>
+                            <a class="nav-link" href="{{ url_for('donations.view') }}">Donations</a>
                         </li>
-                       
+
                         {% if g.user %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('profile.view') }}">

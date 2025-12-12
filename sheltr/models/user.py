@@ -12,7 +12,9 @@ class User:
     """Base User model with CRUD operations."""
 
     def __init__(self, id=None, username=None, email=None, password=None,
-                 name=None, phone=None, city=None, role='volunteer'):
+                 name=None, phone=None, city=None, role='volunteer',
+                 availability=None, skills=None, preferred_shelter_id=None,
+                 latitude=None, longitude=None):
         self.id = id
         self.username = username
         self.email = email
@@ -21,6 +23,11 @@ class User:
         self.phone = phone
         self.city = city
         self.role = role
+        self.availability = availability
+        self.skills = skills
+        self.preferred_shelter_id = preferred_shelter_id
+        self.latitude = latitude
+        self.longitude = longitude
 
     @staticmethod
     def validate_password(password):
@@ -81,8 +88,46 @@ class User:
             return False, "City must be at most 12 characters."
         return True, None
 
+    @staticmethod
+    def validate_availability(availability):
+        """Validate availability (optional, must be one of the allowed values)."""
+        if availability is None or availability == '':
+            return True, None  # Availability is optional
+        allowed_values = ['full-time', 'part-time', 'weekends', 'flexible']
+        if availability not in allowed_values:
+            return False, f"Availability must be one of: {', '.join(allowed_values)}."
+        return True, None
+
+    @staticmethod
+    def validate_skills(skills):
+        """Validate skills (optional, max 500 characters)."""
+        if skills is None or skills == '':
+            return True, None  # Skills is optional
+        if len(skills) > 500:
+            return False, "Skills must be at most 500 characters."
+        return True, None
+
+    @staticmethod
+    def validate_coordinates(latitude, longitude):
+        """Validate latitude and longitude (optional, but both must be provided if one is)."""
+        if latitude is None and longitude is None:
+            return True, None  # Coordinates are optional
+        if latitude is None or longitude is None:
+            return False, "Both latitude and longitude must be provided."
+        try:
+            lat = float(latitude)
+            lon = float(longitude)
+            if lat < -90 or lat > 90:
+                return False, "Latitude must be between -90 and 90."
+            if lon < -180 or lon > 180:
+                return False, "Longitude must be between -180 and 180."
+        except (ValueError, TypeError):
+            return False, "Latitude and longitude must be valid numbers."
+        return True, None
+
     @classmethod
-    def create(cls, username, email, password, name, phone=None, city=None, role='volunteer'):
+    def create(cls, username, email, password, name, phone=None, city=None, role='volunteer',
+               availability=None, skills=None, preferred_shelter_id=None, latitude=None, longitude=None):
         """
         Create a new user in the database.
         Returns (user_object, error_message).
@@ -108,6 +153,18 @@ class User:
         if not valid:
             return None, error
 
+        valid, error = cls.validate_availability(availability)
+        if not valid:
+            return None, error
+
+        valid, error = cls.validate_skills(skills)
+        if not valid:
+            return None, error
+
+        valid, error = cls.validate_coordinates(latitude, longitude)
+        if not valid:
+            return None, error
+
         if not username or not username.strip():
             return None, "Username is required."
 
@@ -118,9 +175,14 @@ class User:
         db = get_db()
         try:
             cursor = db.execute(
-                "INSERT INTO user (username, email, password, name, phone, city, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO user (username, email, password, name, phone, city, role, availability, skills, preferred_shelter_id, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (username.strip(), email.strip(), hashed_password, name.strip(),
-                 phone.strip() if phone else None, city.strip() if city else None, role)
+                 phone.strip() if phone else None, city.strip() if city else None, role,
+                 availability if availability else None,
+                 skills.strip() if skills else None,
+                 int(preferred_shelter_id) if preferred_shelter_id else None,
+                 float(latitude) if latitude else None,
+                 float(longitude) if longitude else None)
             )
             db.commit()
 
@@ -237,7 +299,12 @@ class User:
             name=row['name'] if 'name' in row.keys() else None,
             phone=row['phone'] if 'phone' in row.keys() else None,
             city=row['city'] if 'city' in row.keys() else None,
-            role=row['role'] if 'role' in row.keys() else 'volunteer'
+            role=row['role'] if 'role' in row.keys() else 'volunteer',
+            availability=row['availability'] if 'availability' in row.keys() else None,
+            skills=row['skills'] if 'skills' in row.keys() else None,
+            preferred_shelter_id=row['preferred_shelter_id'] if 'preferred_shelter_id' in row.keys() else None,
+            latitude=row['latitude'] if 'latitude' in row.keys() else None,
+            longitude=row['longitude'] if 'longitude' in row.keys() else None
         )
 
     def to_dict(self):
@@ -249,5 +316,10 @@ class User:
             'name': self.name,
             'phone': self.phone,
             'city': self.city,
-            'role': self.role
+            'role': self.role,
+            'availability': self.availability,
+            'skills': self.skills,
+            'preferred_shelter_id': self.preferred_shelter_id,
+            'latitude': self.latitude,
+            'longitude': self.longitude
         }

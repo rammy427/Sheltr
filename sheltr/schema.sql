@@ -15,6 +15,11 @@ CREATE TABLE user (
     phone TEXT,
     city TEXT,
     role TEXT NOT NULL DEFAULT 'volunteer',
+    availability TEXT,
+    skills TEXT,
+    preferred_shelter_id INTEGER,
+    latitude REAL,
+    longitude REAL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

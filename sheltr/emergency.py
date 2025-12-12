@@ -65,17 +65,32 @@ def render_map(e_id):
         lat = float(coords[1])
         long = float(coords[2])
 
-        # Create a marker for each shelter 
-        folium.Marker(location= [lat, long], tooltip= 'Shelter', popup= name, icon= folium.Icon(icon = 'home', color = 'persimmon')).add_to(shelter_map)
+        # Create enhanced HTML popup for each shelter
+        popup_html = f"""
+        <div style="min-width: 200px; font-family: system-ui, -apple-system, sans-serif;">
+            <h4 style="margin: 0 0 8px 0; color: #334155; font-size: 14px; font-weight: 600;">{name}</h4>
+            <p style="margin: 0 0 8px 0; color: #64748b; font-size: 12px;">{s.description or 'No description available'}</p>
+            <a href="/shelters/{s.id}"
+               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;
+                      font-size: 12px; font-weight: 500;">
+                View Shelter &amp; Register
+            </a>
+        </div>
+        """
+        popup = folium.Popup(popup_html, max_width=300)
+
+        # Create a marker for each shelter
+        folium.Marker(location= [lat, long], tooltip= 'Shelter', popup= popup, icon= folium.Icon(icon = 'home', color = 'persimmon')).add_to(shelter_map)
 
     MousePosition().add_to(shelter_map)
     # Create limiting regions
     folium.CircleMarker([max_lat, min_lon], tooltip="Upper Left Corner").add_to(shelter_map)
     folium.CircleMarker([min_lat, min_lon], tooltip="Lower Left Corner").add_to(shelter_map)
     folium.CircleMarker([min_lat, max_lon], tooltip="Lower Right Corner").add_to(shelter_map)
-    folium.CircleMarker([max_lat, max_lon], tooltip="Upper Right Corner").add_to(shelter_map) 
+    folium.CircleMarker([max_lat, max_lon], tooltip="Upper Right Corner").add_to(shelter_map)
 
-    shelter_map.save('sheltr/templates/shelter_map.html')
+    # Render map directly to HTML string (no file write needed)
     iframe = shelter_map.get_root()._repr_html_()
 
     return render_template_string(

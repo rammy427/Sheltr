@@ -42,13 +42,16 @@ def make_donation():
                 user_id=g.user.id,
                 amount=amount,
                 message=msg,
+                provider=provider,
             )
-           
+
         if error:
             flash(error)
         else:
-            flash('Thanks for donating!', 'success')
-            return redirect(url_for('donations.view'))
+            return redirect(url_for('donations.payment_mockup',
+                                    provider=provider,
+                                    amount=amount,
+                                    donation_id=donation.id))
            
 
     return render_template('donations/make-donation.html', emergencies = emergencies)
@@ -66,4 +69,23 @@ def donation_history():
     return render_template('donations/user-donation-history.html', donations = donation_hist, total_donations = total_donations, sum = sum_total)
 
 
-    
+@bp.route('/payment-mockup')
+@login_required
+def payment_mockup():
+    """Display payment mockup page"""
+    provider = request.args.get('provider')
+    amount = request.args.get('amount')
+    donation_id = request.args.get('donation_id')
+
+    return render_template('donations/payment-mockup.html',
+                          provider=provider,
+                          amount=amount,
+                          donation_id=donation_id)
+
+
+@bp.route('/complete-payment', methods=['POST'])
+@login_required
+def complete_payment():
+    """Complete the payment mockup"""
+    flash('Payment processed successfully! Thanks for donating!', 'success')
+    return redirect(url_for('donations.view'))

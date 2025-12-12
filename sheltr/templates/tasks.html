@@ -1,118 +1,131 @@
 {% extends 'base.html' %}
 
+{% block title %}Tasks{% endblock %}
+
 {% block header %}
-    <h1 class="mx-auto text-center">{% block title %}Tasks{% endblock %}</h1>
+    <h1 class="mx-auto text-center">Your Tasks</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Manage and track your volunteer assignments</p>
 {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto text-center">
-        <div class="row">
-            <div class="col">
-                <h2>Your Tasks</h2>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Filter by status
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <label class="dropdown-item form-check-label" role="button">
-                                <input class="form-check-input" type="checkbox" name="status" value="pending" onchange="updateFilters()"
-                                {% if 'pending' in status %}checked{% endif %}> Pending
-                            </label>
-                        </li>
-                        <li>
-                            <label class="dropdown-item form-check-label" role="button">
-                                <input class="form-check-input" type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
-                                {% if 'in_progress' in status %}checked{% endif %}> In Progress
-                            </label>
-                        </li>
-                        <li>
-                            <label class="dropdown-item form-check-label" role="button">
-                                <input class="form-check-input" type="checkbox" name="status" value="finished" onchange="updateFilters()"
-                                {% if 'finished' in status %}checked{% endif %}> Finished
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-                <h3 class="my-3">Volunteering in:</h3>
-                {% if tasks %}
-                    <table class="table my-3">
-                        <thead>
-                            <tr>
-                                <th scope="col">Task Name</th>
-                                <th scope="col">Task Description</th>
-                                <th scope="col">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for task in tasks %}
-                            <tr>
-                                <td>{{ task.name }}</td>
-                                <td>{{ task.description }}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button id="task-status-{{ task.id }}" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            {% if task.status == 'pending' %}
-                                                Pending
-                                            {% elif task.status == 'in_progress' %}
-                                                In Progress
-                                            {% elif task.status == 'finished' %}
-                                                Finished
-                                            {% endif %}
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'pending')">Pending</button></li>
-                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'in_progress')">In Progress</button></li>
-                                            <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'finished')">Finished</button></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p class="my-3">No assigned tasks.</p>
-                {% endif %}
+    <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 style="color: #334155; margin: 0; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -5px; color: #667eea;">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Task List
+            </h2>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    Filter by Status
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <label class="dropdown-item form-check-label" role="button">
+                            <input class="form-check-input me-2" type="checkbox" name="status" value="pending" onchange="updateFilters()"
+                            {% if 'pending' in status %}checked{% endif %}> Pending
+                        </label>
+                    </li>
+                    <li>
+                        <label class="dropdown-item form-check-label" role="button">
+                            <input class="form-check-input me-2" type="checkbox" name="status" value="in_progress" onchange="updateFilters()"
+                            {% if 'in_progress' in status %}checked{% endif %}> In Progress
+                        </label>
+                    </li>
+                    <li>
+                        <label class="dropdown-item form-check-label" role="button">
+                            <input class="form-check-input me-2" type="checkbox" name="status" value="finished" onchange="updateFilters()"
+                            {% if 'finished' in status %}checked{% endif %}> Finished
+                        </label>
+                    </li>
+                </ul>
             </div>
         </div>
+
+        {% if tasks %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Task Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td style="font-weight: 500;">{{ task.name }}</td>
+                            <td>{{ task.description }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button id="task-status-{{ task.id }}" class="btn btn-sm dropdown-toggle
+                                        {% if task.status == 'pending' %}btn-warning
+                                        {% elif task.status == 'in_progress' %}btn-primary
+                                        {% elif task.status == 'finished' %}btn-success
+                                        {% else %}btn-secondary{% endif %}"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 120px;">
+                                        {% if task.status == 'pending' %}
+                                            Pending
+                                        {% elif task.status == 'in_progress' %}
+                                            In Progress
+                                        {% elif task.status == 'finished' %}
+                                            Finished
+                                        {% endif %}
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'pending')">Pending</button></li>
+                                        <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'in_progress')">In Progress</button></li>
+                                        <li><button class="dropdown-item" onclick="updateTaskStatus({{ task.id }}, 'finished')">Finished</button></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 3rem; color: #64748b;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; opacity: 0.5;">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <p style="margin: 0; font-size: 1.1rem;">No tasks assigned yet.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Visit a shelter to volunteer for tasks!</p>
+            </div>
+        {% endif %}
     </div>
+
     <script>
-        function updateFilters()
-        {
+        function updateFilters() {
             const params = new URLSearchParams(window.location.search);
             params.delete("status");
             document.querySelectorAll("input[name=status]:checked").forEach(checkbox => params.append("status", checkbox.value));
             window.location.search = params.toString();
         }
-        function updateTaskStatus(task_id, new_status)
-        {
-            fetch(`/tasks/update_status`,
-            {
+
+        function updateTaskStatus(task_id, new_status) {
+            fetch(`/tasks/update_status`, {
                 method: "POST",
-                headers:
-                {
+                headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(
-                    {
-                        id: task_id,
-                        status: new_status
-                    }
-                )
+                body: JSON.stringify({
+                    id: task_id,
+                    status: new_status
+                })
             })
             .then(res => res.json())
-            .then(data =>
-            {
-                if (data.success)
-                {
-                    old_status = document.getElementById(`task-status-${task_id}`);
-                    if (new_status == 'pending')
-                        old_status.content = "Pending";
-                    else if (new_status == 'in_progress')
-                        old_status.content = "In Progress";
-                    else
-                        old_status.content = "Finished";
+            .then(data => {
+                if (data.success) {
                     window.location.reload();
                 }
             });

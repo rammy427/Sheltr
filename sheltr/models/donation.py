@@ -10,8 +10,8 @@ from sheltr.db import get_db
 
 
 class Donation:
-    def __init__(self, donation_id=None, emergency_id=None, emergency_name=None, user_id=None, donation_date=None, donation_quantity=None, donation_message=None,):
-        
+    def __init__(self, donation_id=None, emergency_id=None, emergency_name=None, user_id=None, donation_date=None, donation_quantity=None, donation_message=None, payment_process_provider=None):
+
         self.id = donation_id
         self.emergency_id = emergency_id
         self.emergency_name = emergency_name
@@ -19,6 +19,7 @@ class Donation:
         self.date = donation_date
         self.quantity = donation_quantity
         self.message = donation_message
+        self.provider = payment_process_provider
 
     
     @staticmethod
@@ -54,11 +55,26 @@ class Donation:
         if cleaned and len(cleaned) > max_length:
             return False, f"Message must be at most {max_length} characters.", None
 
-        # Reject anything outside of match list 
+        # Reject anything outside of match list
         if cleaned and not re.match(r"^[\w\s\.,!?'\"-]*$", cleaned):
             return False, "Message contains invalid characters.", None
 
         return True, None, cleaned if cleaned else None
+
+    @staticmethod
+    def validate_provider(provider):
+        """
+        Validate payment provider.
+        Returns (is_valid, error_message).
+        """
+        valid_providers = ['Paypal', 'Venmo', 'Apple Pay', 'Credit Card']
+        if provider is None or str(provider).strip() == "":
+            return False, "Payment provider is required."
+
+        if provider not in valid_providers:
+            return False, f"Invalid payment provider. Must be one of: {', '.join(valid_providers)}."
+
+        return True, None
 
     @staticmethod
     def validate_ids(emergency_id, user_id):
@@ -73,7 +89,7 @@ class Donation:
         return True, None
 
     @classmethod
-    def create(cls, emergency_id, user_id, amount, message=None,date=None,):
+    def create(cls, emergency_id, user_id, amount, message=None, date=None, provider=None):
         """
         Create a new donation after validation.
         Returns (Donation instance, error_message).
@@ -91,14 +107,18 @@ class Donation:
         if not valid and error:
             return None, error
 
+        valid, error = cls.validate_provider(provider)
+        if not valid:
+            return None, error
+
         donation_date = date or datetime.now(UTC).isoformat()
 
         db = get_db()
         try:
             cursor = db.execute(
                 """
-                INSERT INTO donation (emergency_id, user_id, donation_date, donation_quantity, donation_message)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO donation (emergency_id, user_id, donation_date, donation_quantity, donation_message, payment_process_provider)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
                     int(emergency_id),
@@ -106,10 +126,11 @@ class Donation:
                     donation_date,
                     str(normalized_amount),
                     cleaned_msg,
+                    provider,
                 ),
             )
             db.commit()
-        except Exception as exc:  
+        except Exception as exc:
             return None, f"Database error creating donation: {exc}"
 
         return (
@@ -120,6 +141,7 @@ class Donation:
                 donation_date=donation_date,
                 donation_quantity=normalized_amount,
                 donation_message=cleaned_msg,
+                payment_process_provider=provider,
             ),
             None,
         )
@@ -247,6 +269,7 @@ class Donation:
             donation_date=row["donation_date"],
             donation_quantity=Decimal(str(row["donation_quantity"])),
             donation_message=row["donation_message"],
+            payment_process_provider=row.get("payment_process_provider"),
         )
     
     def to_dict(self):
@@ -257,4 +280,5 @@ class Donation:
             "donation_date": self.date,
             "donation_quantity": str(self.quantity) if self.quantity is not None else None,
             "donation_message": self.message,
+            "payment_process_provider": self.provider,
         }

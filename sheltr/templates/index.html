@@ -1,46 +1,84 @@
 {% extends 'base.html' %}
 
+{% block title %}Dashboard{% endblock %}
+
 {% block header %}{% endblock %}
 
 {% block content %}
 <div class="dashboard-wrapper">
     <div class="dashboard-header">
         <h1 class="dashboard-title">Welcome to Sheltr</h1>
-        <p class="dashboard-subtitle">Hello, {{ g.user.name }}!</p>
+        <p class="dashboard-subtitle">Hello, {{ g.user.name }}! Ready to make a difference?</p>
     </div>
 
     <div class="dashboard-grid">
         <a href="{{ url_for('profile.view') }}" class="dashboard-card">
+            <div class="dashboard-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea; margin-bottom: 12px;">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
             <h3>My Profile</h3>
-            <p>View and manage your account</p>
+            <p>View and manage your account settings</p>
         </a>
 
         {% if g.user.is_volunteer() %}
             <a href="{{ url_for('shelters.view') }}" class="dashboard-card">
+                <div class="dashboard-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea; margin-bottom: 12px;">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
                 <h3>Volunteer at Shelters</h3>
-                <p>View available shelters and their tasks</p>
+                <p>Find shelters and sign up for tasks</p>
             </a>
         {% endif %}
 
         <a href="{{ url_for('emergency.view') }}" class="dashboard-card">
+            <div class="dashboard-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea; margin-bottom: 12px;">
+                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
             <h3>Emergencies</h3>
-            <p>View emergency information</p>
+            <p>View active emergencies and donate</p>
         </a>
 
         <a href="{{ url_for('tasks.view') }}" class="dashboard-card">
+            <div class="dashboard-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea; margin-bottom: 12px;">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+            </div>
             <h3>Tasks</h3>
-            <p>View and manage assigned tasks</p>
+            <p>View and manage your assigned tasks</p>
         </a>
 
         <a href="{{ url_for('donations.view') }}" class="dashboard-card">
+            <div class="dashboard-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea; margin-bottom: 12px;">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+            </div>
             <h3>Donations</h3>
             <p>Manage donations and contributions</p>
         </a>
 
         {% if g.user.is_manager() %}
         <a href="{{ url_for('admin.view') }}" class="dashboard-card dashboard-card-manager">
+            <div class="dashboard-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #e11d48; margin-bottom: 12px;">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </div>
             <h3>Manager Tools</h3>
-            <p>Access manager features</p>
+            <p>Access admin features and settings</p>
         </a>
         {% endif %}
     </div>
