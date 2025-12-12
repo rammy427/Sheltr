@@ -288,10 +288,10 @@ def install_dependencies():
 
     if IS_WINDOWS:
         subprocess.run([PYTHON_EXECUTABLE, "-m", "pip", "install", "--quiet", "--upgrade", "pip"], check=True)
-        subprocess.run([PYTHON_EXECUTABLE, "-m", "pip", "install", "--quiet", "flask", "bootstrap-flask", "PyJWT", "werkzeug"], check=True)
+        subprocess.run([PYTHON_EXECUTABLE, "-m", "pip", "install", "--quiet", "flask", "bootstrap-flask", "PyJWT", "werkzeug", "folium"], check=True)
     else:
         subprocess.run([PIP_EXECUTABLE, "install", "--quiet", "--upgrade", "pip"], check=True)
-        subprocess.run([PIP_EXECUTABLE, "install", "--quiet", "flask", "bootstrap-flask", "PyJWT", "werkzeug"], check=True)
+        subprocess.run([PIP_EXECUTABLE, "install", "--quiet", "flask", "bootstrap-flask", "PyJWT", "werkzeug", "folium"], check=True)
 
     print("Dependencies installed.")
 
