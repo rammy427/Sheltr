@@ -4,11 +4,12 @@ Ignition - Cross-platform launch script for the Sheltr dev server.
 Uses Docker by default. Falls back to local venv if Docker is unavailable.
 
 Usage:
-    python ignition.py          # Launch with Docker + hot reload (code changes apply instantly)
-    python ignition.py --prod   # Launch with Docker in production mode (static container)
-    python ignition.py --local  # Launch with local venv (no Docker)
-    python ignition.py --stop   # Stop Docker containers
-    python ignition.py --reset  # Reset database and restart
+    python ignition.py              # Launch with Docker + hot reload (code changes apply instantly)
+    python ignition.py --prod       # Launch with Docker in production mode (static container)
+    python ignition.py --local      # Launch with local venv (no Docker)
+    python ignition.py --stop       # Stop Docker containers
+    python ignition.py --reset      # Reset database (Docker mode)
+    python ignition.py --reset --local  # Reset database (local mode)
 
 === TEST CREDENTIALS ===
 
@@ -303,13 +304,9 @@ def initialize_database():
         env["FLASK_APP"] = "sheltr"
         subprocess.run([FLASK_EXECUTABLE, "init-db"], check=True, env=env, cwd=PROJECT_ROOT)
 
-        print("Seeding database with test data...")
-        subprocess.run([PYTHON_EXECUTABLE, "-c", get_seed_script()], env=env, cwd=PROJECT_ROOT, check=True)
-        print("Test data inserted.")
-
         with open(DB_INITIALIZED_FLAG, "w") as f:
             f.write("")
-        print("Database initialized.")
+        print("Database initialized with test data.")
     else:
         print("Database already initialized.")
 
@@ -367,9 +364,9 @@ with app.app_context():
         )
 
     emergencies = [
-        ("Hurricane Maria", 1, "2024-09-15", "https://example.com/hurricane.jpg", "Category 4 hurricane approaching the Florida coast. Mandatory evacuations in coastal areas."),
-        ("Tropical Storm Alex", 0, "2024-06-10", "https://example.com/storm.jpg", "Tropical storm that caused flooding in northern Florida. Now resolved."),
-        ("Wildfire Season 2024", 1, "2024-03-01", "https://example.com/wildfire.jpg", "Ongoing wildfire threats in rural areas. Multiple shelters activated."),
+        ("Hurricane Maria", 1, "2024-09-15", "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", "Category 4 hurricane approaching the Florida coast. Mandatory evacuations in coastal areas."),
+        ("Tropical Storm Alex", 0, "2024-06-10", "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&q=80", "Tropical storm that caused flooding in northern Florida. Now resolved."),
+        ("Wildfire Season 2024", 1, "2024-03-01", "https://images.unsplash.com/photo-1523895665936-7bfe172b757d?w=800&q=80", "Ongoing wildfire threats in rural areas. Multiple shelters activated."),
     ]
 
     for e in emergencies:
@@ -475,6 +472,28 @@ def start_server():
         print("\nServer stopped.")
 
 
+def local_reset():
+    """Reset database for local mode and restart."""
+    print("Resetting local database...")
+
+    # Kill any running server first
+    kill_process_on_port()
+
+    # Remove database file
+    db_path = os.path.join(PROJECT_ROOT, "instance", "sheltr.sqlite")
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        print(f"Removed {db_path}")
+
+    # Remove initialization flag
+    if os.path.exists(DB_INITIALIZED_FLAG):
+        os.remove(DB_INITIALIZED_FLAG)
+        print(f"Removed {DB_INITIALIZED_FLAG}")
+
+    print("Database reset complete. Restarting server...")
+    local_start()
+
+
 def local_start():
     """Run without Docker (original behavior)."""
     create_venv()
@@ -503,7 +522,10 @@ def main():
         sys.exit(0)
 
     if "--reset" in args:
-        docker_reset()
+        if "--local" in args or not check_docker():
+            local_reset()
+        else:
+            docker_reset()
         sys.exit(0)
 
     if "--logs" in args:
