@@ -353,12 +353,12 @@ with app.app_context():
         )
 
     shelters = [
-        ("Miami Convention Center", "Miami, FL", "Large shelter with 500 bed capacity. Has backup generators and medical facilities."),
-        ("Tampa Bay Arena", "Tampa, FL", "Medium shelter with 300 bed capacity. Pet-friendly area available."),
-        ("Orlando Sports Complex", "Orlando, FL", "Large shelter with 400 bed capacity. Wheelchair accessible throughout."),
-        ("Jacksonville Community Center", "Jacksonville, FL", "Small shelter with 150 bed capacity. Near major hospital."),
-        ("Tallahassee High School Gym", "Tallahassee, FL", "Medium shelter with 200 bed capacity. Kitchen facilities on-site."),
-    ]
+        ("Convention Center", "San Juan,18.452263,-66.092282", "Large shelter with 500 bed capacity. Has backup generators and medical facilities."),
+        ("Casita de Bayamón", "Bayamón,18.397952,-66.142013", "Medium shelter with 300 bed capacity. Pet-friendly area available."),
+        ("Bomberos", "Ponce,17.999078,-66.608709", "Large shelter with 400 bed capacity. Wheelchair accessible throughout."),
+        ("Centro", "Luquillo,18.370658,-65.7206", "Small shelter with 150 bed capacity. Near major hospital."),
+        ("Escuela Los Palos", "Lares,18.294432,-66.876314", "Medium shelter with 200 bed capacity. Kitchen facilities on-site."),
+       ]
 
     for s in shelters:
         db.execute(
