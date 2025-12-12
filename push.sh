@@ -49,6 +49,9 @@ git add .
 # Commit with the provided message
 git commit -m "$COMMIT_MSG"
 
+# Create/switch to the branch
+git checkout -B "$BRANCH_NAME"
+
 # Push to the specified branch
 git push -u origin "$BRANCH_NAME"
 
