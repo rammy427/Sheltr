@@ -32,17 +32,18 @@
         </div>
     </div>
 
-<div class="grid-container">
+{% if emergency %}
+    <div class="grid-container">
 
-    {% for e in emergency %}
+        {% for e in emergency %}
 
-    <a class="a-div" href="{{ url_for('emergency.specific_emergency', e_id = e.id) }}">
-        <div class= "inner-grid-container">
+        <a class="a-div" href="{{ url_for('emergency.specific_emergency', e_id = e.id) }}">
+            <div class= "inner-grid-container">
 
-            <div>
-                <h1> {{ e.name }} </h1><br>
-                <h2> {{ e.date }} </h2>
-            </div>
+                <div>
+                    <h1> {{ e.name }} </h1><br>
+                    <h2> {{ e.date }} </h2>
+                </div>
 
             {% if emergency.img_url %}
                
@@ -51,9 +52,12 @@
                 </div>
             {% endif %}
 
-        </div>
-    </a>
-    {% endfor %}
+            </div>
+        </a>
+        {% endfor %}
 
-</div>
+    </div>
+{% else %}
+    <p class="my-3 mx-auto">No emergencies found.</p>
+{% endif %}
 {% endblock %}

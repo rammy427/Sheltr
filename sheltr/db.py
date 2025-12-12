@@ -10,11 +10,12 @@ def get_db():
             current_app.config['DATABASE'],
             detect_types=sqlite3.PARSE_DECLTYPES
         )
+        g.db.execute("PRAGMA foreign_keys = ON;")
         g.db.row_factory = sqlite3.Row
 
     return g.db
 
-def close_db(e=None):
+def close_db(_e=None):
     db = g.pop('db', None)
     if db is not None:
         db.close()
@@ -24,8 +25,7 @@ def init_db():
     db = get_db()
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
-    
-    # TODO: ERASE THIS AFTER IGNITION SCRIPT IS COMPLETELY FIXED!
+
     volunteers = [
         ("volunteer1", "volunteer1@test.com", generate_password_hash("Volunteer1!"), "Alice Johnson", "5551234567", "Miami", "volunteer"),
         ("volunteer2", "volunteer2@test.com", generate_password_hash("Volunteer2!"), "Bob Smith", "5552345678", "Tampa", "volunteer"),
@@ -106,7 +106,7 @@ def init_db():
         )
 
     task_assignments = [
-        (1, 4), (1, 5), (2, 6), (2, 7), (3, 8), (3, 9), (1, 10),
+        (1, 7), (1, 6), (2, 5), (2, 4), (3, 3), (3, 2), (1, 1),
     ]
 
     for assignment in task_assignments:

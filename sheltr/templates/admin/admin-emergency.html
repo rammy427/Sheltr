@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1 class= 'mx-auto text-center p-5'>{% block title %}{{emergency.name if emergency else "Add Emergency"}}{% endblock %}</h1>
+    <link rel="stylesheet" href="../static/style.css">
+{% endblock %}
+
+{% block content %}
+    <div class="grid-container">
+
+        <div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            {% if emergency %}
+                <h3>Edit Information for Emergency {{ emergency.id }}</h3>
+            {% else %}
+                <h3>Add Emergency</h3>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name *</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                           value="{{ emergency.name if emergency else test }}" maxlength="50" required>
+                    <div class="form-text">Maximum 50 characters</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-control" name="description" id="description"
+                              rows="4" maxlength="1000" required>{{ emergency.description if emergency else None }}</textarea>
+                    <div class="form-text">Maximum 1000 characters</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" name="status" id="status">
+                        <option value="0">Inactive</option>
+                        <option value="1">Active</option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{{ url_for('admin.emergencies') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if emergency %}
+        <div class="mt-3 container mx-auto text-center">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Link shelter
+                </button>
+                <ul class="dropdown-menu">
+                    {% for shelter in shelters %}
+                        <li><button class="dropdown-item" onclick="linkShelter({{ emergency.id }}, {{ shelter.id }})">{{ shelter.name }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shelter in assigned_shelters %}
+                        <tr>
+                            <td class="col-2">{{ shelter.name }}</td>
+                            <td class="col-2">{{ shelter.location }}</td>
+                            <td class="col-5">{{ shelter.description }}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="unlinkShelter({{ emergency.id }}, {{ shelter.id }})">Unlink</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    <script>
+        function linkShelter(emergency_id, shelter_id)
+        {
+            fetch(`/emergency/${emergency_id}/${shelter_id}`,
+            {
+                method: "POST",
+                    headers:
+                    {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+            }).then(res => location.reload());
+        }
+        function unlinkShelter(emergency_id, shelter_id)
+        {
+            fetch(`/emergency/${emergency_id}/${shelter_id}`,
+            {
+                method: "DELETE",
+                    headers:
+                    {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+            }).then(res => location.reload());
+        }
+    </script>
+{% endblock %}

@@ -10,6 +10,11 @@
             <h1 class="dashboard-title">Manager Tools</h1>
         </div>
         <div class="dashboard-grid">
+            <a href="{{ url_for('admin.emergencies') }}" class="dashboard-card">
+                <h3>Emergencies</h3>
+                <p>Add, edit, and delete emergencies and assign shelters</p>
+            </a>
+
             <a href="{{ url_for('admin.shelters') }}" class="dashboard-card">
                 <h3>Shelters</h3>
                 <p>Add, edit, and delete shelters and their tasks</p>

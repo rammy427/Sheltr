@@ -23,16 +23,16 @@
                 <tbody>
                     {% for task in tasks %}
                     <tr>
-                        <td class="col-3">{{ task.name }}</td>
-                        <td class="col-4">{{ task.description }}</td>
-                        <td class="col-2">
+                        <td class="col-1">{{ task.name }}</td>
+                        <td class="col-1">{{ task.description }}</td>
+                        <td class="col-1">
                             {% if task.get_volunteer() %}
                                 {{ task.get_volunteer().name }}
                             {% else %}
                                 None
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="col-1">
                             <button class="btn btn-primary" onclick="registerForTask({{ user.id }}, {{ task.id }})">Register</button>
                         </td>
                     </tr>

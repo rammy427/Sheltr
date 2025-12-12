@@ -33,8 +33,11 @@
                 <img src = {{ emergency.img_url}}><br>
                 {% endif %}
 
-                <button class="button button-options">Donate</button><br>
+                <a href="{{ url_for('donations.make_donation') }}">
+                    <button class="button button-options">Donate</button>
+                </a><br>
 
+                
             </div>
 
         </div>

@@ -1,7 +1,6 @@
-from flask import (Blueprint, render_template, render_template_string, g, url_for)
-from sheltr.models import Emergency
-from sheltr.models import Shelter
-from sheltr.auth import login_required
+from flask import (Blueprint, render_template, render_template_string, g, url_for, flash, request)
+from sheltr.models import Emergency, Shelter
+from sheltr.auth import login_required, manager_required
 from sheltr.db import get_db
 import folium
 from folium.plugins import MousePosition
@@ -18,8 +17,7 @@ def view():
     return render_template('emergency.html', emergency = list_emergencies)
 
 
-
-@bp.route('/<int:e_id>')
+@bp.route('/<int:e_id>', methods=['GET'])
 @login_required
 
 def specific_emergency(e_id):
@@ -30,6 +28,14 @@ def specific_emergency(e_id):
     map = render_map(e_id = e_id)
     return render_template('single_emergency.html', emergency = emergency, shelters = shelters, map = map)
 
+@bp.route('/<int:e_id>', methods=['DELETE'])
+@manager_required
+def delete_emergency(e_id):
+    """Delete the specified emergency and unlink all its shelters."""
+    emergency = Emergency.get_one_by_id(e_id)
+    if emergency:
+        Emergency.remove_em(e_id)
+    return '', 204
 
 @bp.route('/<int:e_id>')
 @login_required
@@ -79,3 +85,32 @@ def render_map(e_id):
                     {{iframe|safe}}
                 </body>
             </html> """, iframe=iframe)
+  
+@bp.route('<int:e_id>/<int:s_id>', methods=('POST', 'DELETE'))
+@manager_required
+def link_unlink_shelter(e_id, s_id):
+    """Link or unlink shelter with emergency."""
+    emergency = Emergency.get_one_by_id(e_id)
+    if not emergency:
+        flash('Emergency not found.')
+        return 'Emergency not found.', 404
+    
+    shelter = Shelter.get_by_id(s_id)
+    if not shelter:
+        flash('Shelter not found.')
+        return 'Shelter not found.', 404
+    
+    if request.method == 'POST':
+        success, error = emergency.assign_shelter(s_id)
+    elif request.method == 'DELETE':
+        success, error = emergency.remove_shelter(s_id)
+
+    if success:
+        if request.method == 'POST':
+            flash('Shelter has been linked!', 'success')
+        elif request.method == 'DELETE':
+            flash('Shelter has been removed.', 'success')
+        return '', 204
+    else:
+        flash(error, 'danger')
+        return error, 500
