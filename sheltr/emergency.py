@@ -1,8 +1,10 @@
-from flask import (Blueprint, render_template, render_template_string, g)
+from flask import (Blueprint, render_template, render_template_string, g, url_for)
 from sheltr.models import Emergency
+from sheltr.models import Shelter
 from sheltr.auth import login_required
 from sheltr.db import get_db
 import folium
+from folium.plugins import MousePosition
 
 bp = Blueprint('emergency', __name__, url_prefix = '/emergency')
 
@@ -60,7 +62,7 @@ def render_map(e_id):
         # Create a marker for each shelter 
         folium.Marker(location= [lat, long], tooltip= 'Shelter', popup= name, icon= folium.Icon(icon = 'home', color = 'persimmon')).add_to(shelter_map)
 
-
+    MousePosition().add_to(shelter_map)
     # Create limiting regions
     folium.CircleMarker([max_lat, min_lon], tooltip="Upper Left Corner").add_to(shelter_map)
     folium.CircleMarker([min_lat, min_lon], tooltip="Lower Left Corner").add_to(shelter_map)
