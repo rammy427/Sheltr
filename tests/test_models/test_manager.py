@@ -13,8 +13,8 @@ class TestManagerCreation:
     def test_create_manager_success(self, app_context):
         """Test successful manager creation."""
         manager, error = Manager.create(
-            username='manager1',
-            email='manager1@example.com',
+            username='new_manager1',
+            email='new_manager1@example.com',
             password='ManagerPass1!',
             name='Test Manager'
         )

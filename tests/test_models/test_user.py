@@ -511,3 +511,163 @@ class TestUserCreateValidationFailures:
         user, error = User.create(**sample_user_data)
         assert user is None
         assert 'at most 12 characters' in error
+
+
+class TestUserAvailabilityValidation:
+    """Tests for availability validation."""
+
+    def test_validate_availability_valid_values(self):
+        """Test that valid availability values pass."""
+        valid_values = ['full-time', 'part-time', 'weekends', 'flexible']
+        for value in valid_values:
+            valid, error = User.validate_availability(value)
+            assert valid is True
+            assert error is None
+
+    def test_validate_availability_none_allowed(self):
+        """Test that None availability is allowed."""
+        valid, error = User.validate_availability(None)
+        assert valid is True
+
+    def test_validate_availability_empty_allowed(self):
+        """Test that empty availability is allowed."""
+        valid, error = User.validate_availability('')
+        assert valid is True
+
+    def test_validate_availability_invalid_value(self):
+        """Test that invalid availability value fails."""
+        valid, error = User.validate_availability('invalid-value')
+        assert valid is False
+        assert 'must be one of' in error
+
+
+class TestUserSkillsValidation:
+    """Tests for skills validation."""
+
+    def test_validate_skills_valid(self):
+        """Test that valid skills pass."""
+        valid, error = User.validate_skills('Python, JavaScript, SQL')
+        assert valid is True
+        assert error is None
+
+    def test_validate_skills_none_allowed(self):
+        """Test that None skills is allowed."""
+        valid, error = User.validate_skills(None)
+        assert valid is True
+
+    def test_validate_skills_empty_allowed(self):
+        """Test that empty skills is allowed."""
+        valid, error = User.validate_skills('')
+        assert valid is True
+
+    def test_validate_skills_too_long(self):
+        """Test that skills over 500 characters fails."""
+        long_skills = 'A' * 501
+        valid, error = User.validate_skills(long_skills)
+        assert valid is False
+        assert '500 characters' in error
+
+
+class TestUserCoordinatesValidation:
+    """Tests for coordinates validation."""
+
+    def test_validate_coordinates_valid(self):
+        """Test that valid coordinates pass."""
+        valid, error = User.validate_coordinates(18.4655, -66.1057)
+        assert valid is True
+        assert error is None
+
+    def test_validate_coordinates_none_allowed(self):
+        """Test that None coordinates are allowed."""
+        valid, error = User.validate_coordinates(None, None)
+        assert valid is True
+
+    def test_validate_coordinates_missing_latitude(self):
+        """Test that missing latitude fails."""
+        valid, error = User.validate_coordinates(None, -66.1057)
+        assert valid is False
+        assert 'both' in error.lower()
+
+    def test_validate_coordinates_missing_longitude(self):
+        """Test that missing longitude fails."""
+        valid, error = User.validate_coordinates(18.4655, None)
+        assert valid is False
+        assert 'both' in error.lower()
+
+    def test_validate_coordinates_latitude_too_low(self):
+        """Test that latitude below -90 fails."""
+        valid, error = User.validate_coordinates(-91, -66)
+        assert valid is False
+        assert 'between -90 and 90' in error
+
+    def test_validate_coordinates_latitude_too_high(self):
+        """Test that latitude above 90 fails."""
+        valid, error = User.validate_coordinates(91, -66)
+        assert valid is False
+        assert 'between -90 and 90' in error
+
+    def test_validate_coordinates_longitude_too_low(self):
+        """Test that longitude below -180 fails."""
+        valid, error = User.validate_coordinates(18, -181)
+        assert valid is False
+        assert 'between -180 and 180' in error
+
+    def test_validate_coordinates_longitude_too_high(self):
+        """Test that longitude above 180 fails."""
+        valid, error = User.validate_coordinates(18, 181)
+        assert valid is False
+        assert 'between -180 and 180' in error
+
+    def test_validate_coordinates_invalid_type(self):
+        """Test that non-numeric coordinates fail."""
+        valid, error = User.validate_coordinates('abc', 'def')
+        assert valid is False
+        assert 'valid numbers' in error
+
+
+class TestUserCreateWithVolunteerFields:
+    """Tests for User creation with volunteer-specific fields."""
+
+    def test_create_user_with_availability(self, app_context, sample_user_data):
+        """Test creating user with availability."""
+        sample_user_data['availability'] = 'full-time'
+        user, error = User.create(**sample_user_data)
+        assert user is not None
+        assert error is None
+
+    def test_create_user_with_invalid_availability(self, app_context, sample_user_data):
+        """Test creating user with invalid availability fails."""
+        sample_user_data['availability'] = 'invalid'
+        user, error = User.create(**sample_user_data)
+        assert user is None
+        assert 'must be one of' in error
+
+    def test_create_user_with_skills(self, app_context, sample_user_data):
+        """Test creating user with skills."""
+        sample_user_data['skills'] = 'First Aid, CPR'
+        user, error = User.create(**sample_user_data)
+        assert user is not None
+        assert error is None
+
+    def test_create_user_with_skills_too_long(self, app_context, sample_user_data):
+        """Test creating user with skills too long fails."""
+        sample_user_data['skills'] = 'A' * 501
+        user, error = User.create(**sample_user_data)
+        assert user is None
+        assert '500 characters' in error
+
+    def test_create_user_with_coordinates(self, app_context, sample_user_data):
+        """Test creating user with coordinates."""
+        sample_user_data['latitude'] = 18.4655
+        sample_user_data['longitude'] = -66.1057
+        user, error = User.create(**sample_user_data)
+        assert user is not None
+        assert error is None
+
+    def test_create_user_with_invalid_coordinates(self, app_context, sample_user_data):
+        """Test creating user with invalid coordinates fails."""
+        sample_user_data['latitude'] = 100  # Out of range
+        sample_user_data['longitude'] = -66
+        user, error = User.create(**sample_user_data)
+        assert user is None
+        assert 'between -90 and 90' in error

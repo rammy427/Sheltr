@@ -317,3 +317,69 @@ class TestMultipleTasksScenarios:
                 content_type='application/json'
             )
             assert response.get_json()['success'] is True
+
+
+class TestTaskDeletion:
+    """Tests for task deletion."""
+
+    def test_delete_task_requires_manager(self, authenticated_client, sample_task):
+        """Test that task deletion redirects non-managers."""
+        response = authenticated_client.delete(f'/tasks/{sample_task["task_id"]}')
+        # Non-manager gets redirected
+        assert response.status_code == 302
+
+    def test_delete_task_success(self, authenticated_manager_client, sample_task):
+        """Test successful task deletion by manager."""
+        response = authenticated_manager_client.delete(f'/tasks/{sample_task["task_id"]}')
+        assert response.status_code == 204
+
+    def test_delete_nonexistent_task(self, authenticated_manager_client):
+        """Test deleting a nonexistent task."""
+        response = authenticated_manager_client.delete('/tasks/99999')
+        assert response.status_code == 204  # Returns 204 even for nonexistent
+
+
+class TestTaskAssignment:
+    """Tests for task assignment."""
+
+    def test_assign_task_success(self, authenticated_client, app_context, db, created_user):
+        """Test successful task assignment."""
+        # Create an unassigned task with shelter
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Assign Test Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        task = db.execute("SELECT task_id FROM task WHERE task_name = 'Assign Test Task'").fetchone()
+
+        response = authenticated_client.post(f'/tasks/{task["task_id"]}/{created_user.id}')
+        assert response.status_code == 204
+
+    def test_assign_task_volunteer_not_found(self, authenticated_client, sample_task):
+        """Test assigning task to nonexistent volunteer."""
+        response = authenticated_client.post(f'/tasks/{sample_task["task_id"]}/99999')
+        assert response.status_code == 404
+
+    def test_assign_task_task_not_found(self, authenticated_client, created_user):
+        """Test assigning nonexistent task."""
+        response = authenticated_client.post(f'/tasks/99999/{created_user.id}')
+        assert response.status_code == 404
+
+    def test_assign_task_already_taken(self, authenticated_client, app_context, db, created_user):
+        """Test assigning already taken task."""
+        # Create and assign a task
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Already Taken Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        task = db.execute("SELECT task_id FROM task WHERE task_name = 'Already Taken Task'").fetchone()
+
+        # First assignment should succeed
+        authenticated_client.post(f'/tasks/{task["task_id"]}/{created_user.id}')
+
+        # Second assignment should fail
+        response = authenticated_client.post(f'/tasks/{task["task_id"]}/{created_user.id}')
+        assert response.status_code == 500  # Already taken

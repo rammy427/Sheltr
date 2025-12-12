@@ -14,8 +14,8 @@ class TestVolunteerCreation:
     def test_create_volunteer_success(self, app_context):
         """Test successful volunteer creation."""
         volunteer, error = Volunteer.create(
-            username='volunteer1',
-            email='volunteer1@example.com',
+            username='new_volunteer1',
+            email='new_volunteer1@example.com',
             password='VolunteerPass1!',
             name='Test Volunteer'
         )
@@ -38,8 +38,8 @@ class TestVolunteerCreation:
     def test_volunteer_role_set_automatically(self, app_context):
         """Test that role is set to volunteer automatically."""
         volunteer, _ = Volunteer.create(
-            username='volunteer3',
-            email='volunteer3@example.com',
+            username='new_volunteer3',
+            email='new_volunteer3@example.com',
             password='VolunteerPass1!',
             name='Test Volunteer'
         )
@@ -149,6 +149,117 @@ class TestVolunteerTasks:
         tasks2 = vol_instance.get_tasks()
 
         assert tasks1 is tasks2  # Same object reference
+
+
+class TestVolunteerGetAll:
+    """Tests for getting all volunteers."""
+
+    def test_get_all_volunteers(self, app_context, db):
+        """Test getting all volunteers."""
+        volunteers = Volunteer.get_all()
+        assert volunteers is not None
+        # Should have seed data volunteers
+        assert len(volunteers) > 0
+
+    def test_get_all_returns_only_volunteers(self, app_context, db):
+        """Test that get_all only returns volunteers, not managers."""
+        volunteers = Volunteer.get_all()
+        for v in volunteers:
+            assert v.role == 'volunteer'
+
+
+class TestVolunteerAssignTask:
+    """Tests for volunteer task assignment."""
+
+    def test_assign_task_success(self, app_context, db):
+        """Test successful task assignment."""
+        # Create volunteer
+        volunteer, _ = Volunteer.create(
+            username='assign_volunteer',
+            email='assign@example.com',
+            password='AssignPass1!',
+            name='Assign Volunteer'
+        )
+
+        # Create a task
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Assignable Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        task = db.execute("SELECT task_id FROM task WHERE task_name = 'Assignable Task'").fetchone()
+
+        vol_instance = Volunteer(
+            id=volunteer.id,
+            username=volunteer.username,
+            email=volunteer.email,
+            password=volunteer.password,
+            name=volunteer.name
+        )
+
+        success, error = vol_instance.assign_task(task['task_id'])
+        assert success is True
+        assert error is None
+
+    def test_assign_task_nonexistent(self, app_context, db):
+        """Test assigning nonexistent task."""
+        volunteer, _ = Volunteer.create(
+            username='nonexist_volunteer',
+            email='nonexist@example.com',
+            password='NonexistPass1!',
+            name='Nonexist Volunteer'
+        )
+
+        vol_instance = Volunteer(
+            id=volunteer.id,
+            username=volunteer.username,
+            email=volunteer.email,
+            password=volunteer.password,
+            name=volunteer.name
+        )
+
+        success, error = vol_instance.assign_task(99999)
+        assert success is False
+        assert 'not found' in error.lower()
+
+    def test_assign_task_already_taken(self, app_context, db):
+        """Test assigning a task that's already taken."""
+        # Create two volunteers
+        vol1, _ = Volunteer.create(
+            username='taken_vol1',
+            email='taken1@example.com',
+            password='TakenPass1!',
+            name='Taken Vol 1'
+        )
+        vol2, _ = Volunteer.create(
+            username='taken_vol2',
+            email='taken2@example.com',
+            password='TakenPass2!',
+            name='Taken Vol 2'
+        )
+
+        # Create a task
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Already Taken Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        task = db.execute("SELECT task_id FROM task WHERE task_name = 'Already Taken Task'").fetchone()
+
+        # Assign to first volunteer
+        vol1_inst = Volunteer(id=vol1.id, username=vol1.username, email=vol1.email,
+                              password=vol1.password, name=vol1.name)
+        success, _ = vol1_inst.assign_task(task['task_id'])
+        assert success is True
+
+        # Try to assign to second volunteer
+        vol2_inst = Volunteer(id=vol2.id, username=vol2.username, email=vol2.email,
+                              password=vol2.password, name=vol2.name)
+        success, error = vol2_inst.assign_task(task['task_id'])
+        assert success is False
+        assert 'already taken' in error.lower()
 
 
 class TestVolunteerInheritance:

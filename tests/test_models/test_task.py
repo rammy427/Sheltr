@@ -321,3 +321,320 @@ class TestTaskWorkflow:
         for task in tasks[1:]:
             refreshed = Task.get_by_id(task.id)
             assert refreshed.status == 'pending'
+
+
+class TestTaskNameValidation:
+    """Tests for task name validation."""
+
+    def test_validate_name_valid(self):
+        """Test valid task name."""
+        valid, error = Task.validate_name('Valid Task Name')
+        assert valid is True
+        assert error is None
+
+    def test_validate_name_empty(self):
+        """Test empty task name fails."""
+        valid, error = Task.validate_name('')
+        assert valid is False
+        assert 'required' in error.lower()
+
+    def test_validate_name_whitespace_only(self):
+        """Test whitespace-only name fails."""
+        valid, error = Task.validate_name('   ')
+        assert valid is False
+        assert 'required' in error.lower()
+
+    def test_validate_name_too_long(self):
+        """Test name exceeding max length fails."""
+        long_name = 'a' * 60
+        valid, error = Task.validate_name(long_name)
+        assert valid is False
+        assert '50' in error
+
+    def test_validate_name_none(self):
+        """Test None name fails."""
+        valid, error = Task.validate_name(None)
+        assert valid is False
+
+
+class TestTaskDescriptionValidation:
+    """Tests for task description validation."""
+
+    def test_validate_description_valid(self):
+        """Test valid description."""
+        valid, error = Task.validate_description('This is a valid description')
+        assert valid is True
+        assert error is None
+
+    def test_validate_description_empty(self):
+        """Test empty description fails."""
+        valid, error = Task.validate_description('')
+        assert valid is False
+        assert 'required' in error.lower()
+
+    def test_validate_description_too_long(self):
+        """Test description exceeding max length fails."""
+        long_desc = 'a' * 1100
+        valid, error = Task.validate_description(long_desc)
+        assert valid is False
+        assert '1000' in error
+
+
+class TestTaskShelterValidation:
+    """Tests for task shelter validation."""
+
+    def test_validate_shelter_exists(self, app_context, db):
+        """Test validation with existing shelter."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        valid, error = Task.validate_shelter(shelter['shelter_id'])
+        assert valid is True
+        assert error is None
+
+    def test_validate_shelter_not_exists(self, app_context, db):
+        """Test validation with nonexistent shelter."""
+        valid, error = Task.validate_shelter(99999)
+        assert valid is False
+        assert 'not found' in error.lower()
+
+
+class TestTaskVolunteerValidation:
+    """Tests for task volunteer validation."""
+
+    def test_validate_volunteer_exists(self, app_context, db, created_user):
+        """Test validation with existing volunteer."""
+        valid, error = Task.validate_volunteer(str(created_user.id))
+        assert valid is True
+        assert error is None
+
+    def test_validate_volunteer_not_exists(self, app_context, db):
+        """Test validation with nonexistent volunteer."""
+        valid, error = Task.validate_volunteer('99999')
+        assert valid is False
+        assert 'not found' in error.lower()
+
+    def test_validate_volunteer_minus_one(self, app_context):
+        """Test validation with -1 (no volunteer)."""
+        valid, error = Task.validate_volunteer('-1')
+        assert valid is True
+        assert error is None
+
+
+class TestTaskCreate:
+    """Tests for Task creation."""
+
+    def test_create_task_success(self, app_context, db):
+        """Test successful task creation."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        task, error = Task.create(
+            name='New Task',
+            description='New task description for testing',
+            status='pending',
+            volunteer_id='-1',
+            shelter_id=shelter['shelter_id']
+        )
+        assert task is not None
+        assert error is None
+        assert task.name == 'New Task'
+
+    def test_create_task_invalid_name(self, app_context, db):
+        """Test task creation with invalid name."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        task, error = Task.create(
+            name='',
+            description='Description',
+            shelter_id=shelter['shelter_id']
+        )
+        assert task is None
+        assert error is not None
+
+    def test_create_task_invalid_description(self, app_context, db):
+        """Test task creation with invalid description."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        task, error = Task.create(
+            name='Valid Name',
+            description='',
+            shelter_id=shelter['shelter_id']
+        )
+        assert task is None
+        assert error is not None
+
+    def test_create_task_invalid_shelter(self, app_context, db):
+        """Test task creation with invalid shelter."""
+        task, error = Task.create(
+            name='Valid Name',
+            description='Valid description',
+            shelter_id=99999
+        )
+        assert task is None
+        assert error is not None
+
+    def test_create_task_with_volunteer(self, app_context, db, created_user):
+        """Test task creation with volunteer assignment."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        task, error = Task.create(
+            name='Assigned Task',
+            description='Task with volunteer assigned',
+            status='pending',
+            volunteer_id=str(created_user.id),
+            shelter_id=shelter['shelter_id']
+        )
+        assert task is not None
+        assert error is None
+
+
+class TestTaskUpdate:
+    """Tests for Task update."""
+
+    def test_update_task_name(self, app_context, db):
+        """Test updating task name."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Original Name', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Original Name'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        success, error = task.update(name='Updated Name')
+        assert success is True
+        assert task.name == 'Updated Name'
+
+    def test_update_task_description(self, app_context, db):
+        """Test updating task description."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Task Name', 'Original Desc', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Task Name'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        success, error = task.update(description='Updated Description')
+        assert success is True
+        assert task.description == 'Updated Description'
+
+    def test_update_task_invalid_name(self, app_context, db):
+        """Test updating task with invalid name."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Update Test', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Update Test'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        success, error = task.update(name='')
+        assert success is False
+        assert error is not None
+
+    def test_update_task_volunteer(self, app_context, db, created_user):
+        """Test updating task volunteer assignment."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Volunteer Update', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Volunteer Update'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        success, error = task.update(volunteer_id=str(created_user.id))
+        assert success is True
+
+    def test_update_task_remove_volunteer(self, app_context, db, created_user):
+        """Test removing volunteer from task."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Remove Volunteer', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Remove Volunteer'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        success, error = task.update(volunteer_id='-1')
+        assert success is True
+        assert task.volunteer is None
+
+
+class TestTaskDelete:
+    """Tests for Task deletion."""
+
+    def test_delete_task(self, app_context, db):
+        """Test deleting a task."""
+        db.execute(
+            "INSERT INTO task (task_name, description, status) VALUES (?, ?, ?)",
+            ('Delete Me', 'Description', 'pending')
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Delete Me'").fetchone()
+        task_id = row['task_id']
+        task = Task.get_by_id(task_id)
+
+        task.delete()
+
+        # Verify deleted
+        deleted = Task.get_by_id(task_id)
+        assert deleted is None
+
+
+class TestTaskVolunteerRelation:
+    """Tests for Task-Volunteer relationship."""
+
+    def test_get_volunteer_none(self, app_context, db):
+        """Test getting volunteer when none assigned."""
+        db.execute(
+            "INSERT INTO task (task_name, description, status) VALUES (?, ?, ?)",
+            ('No Volunteer Task', 'Description', 'pending')
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'No Volunteer Task'").fetchone()
+        task = Task.get_by_id(row['task_id'])
+
+        volunteer = task.get_volunteer()
+        assert volunteer is None
+
+    def test_get_volunteer_assigned(self, app_context, db, created_user):
+        """Test getting assigned volunteer."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Assigned Volunteer Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Assigned Volunteer Task'").fetchone()
+
+        # Assign volunteer
+        db.execute(
+            "INSERT INTO user_task (user_id, task_id) VALUES (?, ?)",
+            (created_user.id, row['task_id'])
+        )
+        db.commit()
+
+        task = Task.get_by_id(row['task_id'])
+        volunteer = task.get_volunteer()
+        assert volunteer is not None
+        assert volunteer.id == created_user.id
+
+    def test_get_volunteer_caches(self, app_context, db, created_user):
+        """Test that get_volunteer caches result."""
+        shelter = db.execute("SELECT shelter_id FROM shelters LIMIT 1").fetchone()
+        db.execute(
+            "INSERT INTO task (task_name, description, status, shelter_id) VALUES (?, ?, ?, ?)",
+            ('Cache Volunteer Task', 'Description', 'pending', shelter['shelter_id'])
+        )
+        db.commit()
+        row = db.execute("SELECT task_id FROM task WHERE task_name = 'Cache Volunteer Task'").fetchone()
+        db.execute(
+            "INSERT INTO user_task (user_id, task_id) VALUES (?, ?)",
+            (created_user.id, row['task_id'])
+        )
+        db.commit()
+
+        task = Task.get_by_id(row['task_id'])
+        vol1 = task.get_volunteer()
+        vol2 = task.get_volunteer()
+        assert vol1 is vol2  # Same object reference
