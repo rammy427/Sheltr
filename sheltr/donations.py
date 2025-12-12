@@ -16,14 +16,12 @@ def view():
     return render_template('donations/donations.html', donations = donation_list)
 
 
-
-
 @bp.route('/make-donation', methods = ('GET', 'POST'))
 @login_required
 def make_donation():
 
     db = get_db()
-    emergencies = db.execute("SELECT emergency_id, emergency_name FROM emergencies ORDER BY emergency_name").fetchall()
+    emergencies = db.execute("SELECT emergency_id, emergency_name FROM emergencies WHERE emergency_status = 1 ORDER BY emergency_name").fetchall()
 
     if request.method == 'POST':
         emergency_selection = request.form.get('emergency_id')
@@ -55,7 +53,17 @@ def make_donation():
 
     return render_template('donations/make-donation.html', emergencies = emergencies)
 
+@bp.route('/user-donation-history.html')
+@login_required
+def donation_history():
+    """View of 50 most recent donations done by the user"""
+    user_id = g.user.id
 
+    donation_hist = Donation.user_donation_history(user_id)
+    total_donations = Donation.count_by_donations(user_id)
+    sum_total = Donation.sum_by_user_donation(user_id)
+
+    return render_template('donations/user-donation-history.html', donations = donation_hist, total_donations = total_donations, sum = sum_total)
 
 
     
