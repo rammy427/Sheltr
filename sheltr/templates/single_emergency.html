@@ -28,14 +28,24 @@
             </div>
 
             <div style= "text-align: center" >
+
+                {% if emergency.img_url %}
                 <img src = {{ emergency.img_url}}><br>
+                {% endif %}
 
-                <button class="button button-options">Donate</button><br>
+                <a href="{{ url_for('donations.make_donation') }}">
+                    <button class="button button-options">Donate</button>
+                </a><br>
 
+                
             </div>
 
         </div>
 
+    </div>
+
+    <div class="container mx-auto text-center" style="width:85%; height:85%; padding:50px">
+        {{ map|safe }}
     </div>
     
     <div class="container mx-auto text-center">

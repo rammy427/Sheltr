@@ -10,10 +10,11 @@ from sheltr.db import get_db
 
 
 class Donation:
-    def __init__(self, donation_id=None, emergency_id=None, user_id=None, donation_date=None, donation_quantity=None, donation_message=None,):
+    def __init__(self, donation_id=None, emergency_id=None, emergency_name=None, user_id=None, donation_date=None, donation_quantity=None, donation_message=None,):
         
         self.id = donation_id
         self.emergency_id = emergency_id
+        self.emergency_name = emergency_name
         self.user_id = user_id
         self.date = donation_date
         self.quantity = donation_quantity
@@ -152,14 +153,38 @@ class Donation:
         db = get_db()
         rows = db.execute(
             """
-            SELECT * FROM donation
-            WHERE user_id = ?
-            ORDER BY donation_date DESC
+            SELECT
+                emergencies.emergency_name AS emergency_name,
+                donation.donation_date AS donation_date,
+                donation.donation_quantity AS donation_quantity,
+                donation.donation_message AS donation_message
+            FROM donation
+            JOIN emergencies ON donation.emergency_id = emergencies.emergency_id
+            WHERE donation.user_id = ?
+            ORDER BY donation.donation_date DESC
             LIMIT ?
             """,
             (user_id, limit),
         ).fetchall()
-        return [cls.from_row(row) for row in rows]
+        history = []
+        for row in rows:
+            donation_date = row["donation_date"]
+            if isinstance(donation_date, str):
+                try:
+                    donation_date = datetime.fromisoformat(donation_date)
+                except ValueError:
+                    donation_date = None
+
+            history.append(
+                {
+                    "emergency_name": row["emergency_name"],
+                    "donation_date": donation_date,
+                    "donation_quantity": Decimal(str(row["donation_quantity"])),
+                    "donation_message": row["donation_message"],
+                }
+            )
+
+        return history
 
     @classmethod
     def emergency_donation_history(cls, emergency_id: int, limit: int = 50):
@@ -183,6 +208,15 @@ class Donation:
             (emergency_id,),
         ).fetchone()
         return Decimal(str(row["total"])) if row else Decimal("0.00")
+    
+    @classmethod
+    def sum_by_user_donation(cls, user_id: int):
+        db = get_db()
+        row = db.execute(
+            "SELECT COALESCE(SUM(donation_quantity), 0) AS total FROM donation WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+        return Decimal(str(row["total"])) if row else Decimal("0.00")
 
     @classmethod
     def count_by_emergency(cls, emergency_id: int):
@@ -192,8 +226,18 @@ class Donation:
             (emergency_id,),
         ).fetchone()
         return int(row["count"]) if row else 0
+    
+    @classmethod
+    def count_by_donations(cls, user_id: int):
+        db = get_db()
+        row = db.execute(
+            "SELECT COUNT(*) AS count FROM donation WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+        return int(row["count"]) if row else 0
 
-    # ---------- Utilities ----------
+
+  
     @classmethod
     def from_row(cls, row):
         return cls(
@@ -204,7 +248,7 @@ class Donation:
             donation_quantity=Decimal(str(row["donation_quantity"])),
             donation_message=row["donation_message"],
         )
-
+    
     def to_dict(self):
         return {
             "donation_id": self.id,
