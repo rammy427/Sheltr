@@ -140,13 +140,12 @@ class Task:
 
             # Return created shelter.
             return task, None
-        except:
+        except Exception:
             return None, "Failed to create task."
 
     def delete(self):
         """Delete task from database."""
         db = get_db()
-        print(self.id, type(self.id))
         db.execute("DELETE FROM task WHERE task_id = ?", (self.id,))
         db.commit()
     
