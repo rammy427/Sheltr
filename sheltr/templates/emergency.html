@@ -1,29 +1,44 @@
 {% extends 'base.html' %}
 
-{% block header %}
-    <h1 class= 'mx-auto text-center'>{% block title %}Emergencies{% endblock %}</h1>
-    <link rel="stylesheet" href="../static/style.css">
+{% block title %}Emergencies{% endblock %}
 
+{% block header %}
+    <h1 class='mx-auto text-center' style="margin-bottom: 0;">Emergencies</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Browse active emergencies and support relief efforts</p>
 {% endblock %}
 
 {% block content %}
     <div class="search-container">
         <div class="search-wrapper">
-            <input
-                type="text"
-                id="emergency-search"
-                class="search-input"
-                placeholder="Search emergencies..."
-                autocomplete="off"
-            >
             <span class="search-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                 </svg>
             </span>
+            <input
+                type="text"
+                id="emergency-search"
+                class="search-input"
+                placeholder="Search emergencies by name or description..."
+                autocomplete="off"
+            >
         </div>
         <p id="search-results-count" class="search-results-count"></p>
+
+        <div class="filter-container" style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="filter-active" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span class="badge bg-success">Active</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="filter-inactive" checked style="width: 18px; height: 18px; accent-color: #667eea;">
+                <span class="badge bg-secondary">Inactive</span>
+            </label>
+            <button type="button" id="clear-filters" class="btn btn-sm btn-outline-secondary">
+                Clear All Filters
+            </button>
+        </div>
     </div>
 
 {% if emergency %}
@@ -33,18 +48,18 @@
 
         <a class="a-div emergency-card" href="{{ url_for('emergency.specific_emergency', e_id = e.id) }}"
            data-name="{{ e.name|lower }}"
-           data-description="{{ e.description|lower if e.description else '' }}">
+           data-description="{{ e.description|lower if e.description else '' }}"
+           data-status="{{ 'active' if e.status == True else 'inactive' }}">
             <div class="inner-grid-container">
 
                 <div>
-                    <h1>{{ e.name }}</h1><br>
+                    <h1>{{ e.name }}</h1>
                     <h2>{{ e.date }}</h2>
                 </div>
 
-            {% if emergency.img_url %}
-               
-                <div style= "text-align: center" >
-                    <img src = {{ e.img_url}}><br>
+            {% if e.img_url %}
+                <div style="text-align: center;">
+                    <img src="{{ e.img_url }}" alt="{{ e.name }}" style="max-height: 150px; object-fit: cover;">
                 </div>
             {% endif %}
 
@@ -54,7 +69,16 @@
 
     </div>
 {% else %}
-    <p class="my-3 mx-auto no-emergencies-message">No emergencies found.</p>
+    <div class="grid-container" style="text-align: center; padding: 3rem;">
+        <div style="opacity: 0.7;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b; margin-bottom: 1rem;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m15 9-6 6"></path>
+                <path d="m9 9 6 6"></path>
+            </svg>
+            <p style="color: #64748b; font-size: 1.1rem; margin: 0;">No emergencies found.</p>
+        </div>
+    </div>
 {% endif %}
 
 <script>
@@ -62,20 +86,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('emergency-search');
     const resultsCount = document.getElementById('search-results-count');
     const cards = document.querySelectorAll('.emergency-card');
+    const filterActive = document.getElementById('filter-active');
+    const filterInactive = document.getElementById('filter-inactive');
+    const clearFiltersBtn = document.getElementById('clear-filters');
     const noEmergenciesMsg = document.querySelector('.no-emergencies-message');
 
     if (!searchInput || cards.length === 0) return;
 
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
+    function applyFilters() {
+        const query = searchInput.value.toLowerCase().trim();
+        const showActive = filterActive.checked;
+        const showInactive = filterInactive.checked;
         let visibleCount = 0;
 
         cards.forEach(function(card) {
             const name = card.dataset.name || '';
             const description = card.dataset.description || '';
-            const matches = name.includes(query) || description.includes(query);
+            const status = card.dataset.status || '';
 
-            if (matches) {
+            // Check text match
+            const textMatches = name.includes(query) || description.includes(query);
+
+            // Check status match
+            const statusMatches = (status === 'active' && showActive) || (status === 'inactive' && showInactive);
+
+            if (textMatches && statusMatches) {
                 card.style.display = '';
                 visibleCount++;
             } else {
@@ -83,11 +118,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (query) {
+        if (query || !showActive || !showInactive) {
             resultsCount.textContent = visibleCount + ' result' + (visibleCount !== 1 ? 's' : '') + ' found';
         } else {
             resultsCount.textContent = '';
         }
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', applyFilters);
+    filterActive.addEventListener('change', applyFilters);
+    filterInactive.addEventListener('change', applyFilters);
+
+    clearFiltersBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        filterActive.checked = true;
+        filterInactive.checked = true;
+        applyFilters();
     });
 });
 </script>

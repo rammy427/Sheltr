@@ -1,45 +1,65 @@
 {% extends 'base.html' %}
 
+{% block title %}Edit Profile{% endblock %}
+
 {% block header %}
-  <h1>{% block title %}Edit Profile{% endblock %}</h1>
+    <h1 class="text-center">Edit Profile</h1>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container" style="max-width: 700px; margin: 0 auto;">
     <div class="card">
         <div class="card-header">
-            <h3>Edit Profile Information</h3>
+            <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea;">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Profile Information
+            </h3>
         </div>
         <div class="card-body">
             <form method="post">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Full Name *</label>
+                <div class="mb-4">
+                    <label for="name" class="form-label" style="font-weight: 600; color: #334155;">Full Name *</label>
                     <input type="text" class="form-control" id="name" name="name"
-                           value="{{ user.name }}" maxlength="100" required>
-                    <div class="form-text">Maximum 100 characters</div>
+                           value="{{ user.name }}" maxlength="100" required placeholder="Enter your full name">
+                    <div class="form-text" style="color: #94a3b8;">Maximum 100 characters</div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone Number</label>
+                <div class="mb-4">
+                    <label for="phone" class="form-label" style="font-weight: 600; color: #334155;">Phone Number</label>
                     <input type="tel" class="form-control" id="phone" name="phone"
                            value="{{ user.phone if user.phone else '' }}"
-                           maxlength="10" pattern="[0-9]*" placeholder="10 digits">
-                    <div class="form-text">Optional, digits only, maximum 10 digits</div>
+                           maxlength="10" pattern="[0-9]*" placeholder="10 digit phone number">
+                    <div class="form-text" style="color: #94a3b8;">Optional, digits only, maximum 10 digits</div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                <div class="mb-4">
+                    <label for="city" class="form-label" style="font-weight: 600; color: #334155;">City</label>
                     <input type="text" class="form-control" id="city" name="city"
-                           value="{{ user.city if user.city else '' }}" maxlength="12">
-                    <div class="form-text">Optional, maximum 12 characters</div>
+                           value="{{ user.city if user.city else '' }}" maxlength="12" placeholder="Enter your city">
+                    <div class="form-text" style="color: #94a3b8;">Optional, maximum 12 characters</div>
                 </div>
 
-                <div class="alert alert-info">
-                    <strong>Note:</strong> Username, email, and role cannot be changed.
+                <div class="alert alert-info" style="display: flex; align-items: center; gap: 10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    <span><strong>Note:</strong> Username, email, and role cannot be changed.</span>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Changes
+                    </button>
                     <a href="{{ url_for('profile.view') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>

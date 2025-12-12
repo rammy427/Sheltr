@@ -4,6 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
 )
 from sheltr.models import User
+from sheltr.models.shelter import Shelter
 from sheltr.jwt_utils import generate_token, verify_token, is_token_expiring_soon, refresh_token
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -20,6 +21,13 @@ def register():
         city = request.form.get('city', '').strip()
         role = request.form.get('role', 'volunteer')
 
+        # Extract volunteer-specific fields
+        availability = request.form.get('availability', '')
+        skills = request.form.get('skills', '')
+        preferred_shelter_id = request.form.get('preferred_shelter_id', '')
+        latitude = request.form.get('latitude', '')
+        longitude = request.form.get('longitude', '')
+
         error = None
 
         if not username:
@@ -35,7 +43,12 @@ def register():
                 name=name,
                 phone=phone if phone else None,
                 city=city if city else None,
-                role=role
+                role=role,
+                availability=availability if availability else None,
+                skills=skills if skills else None,
+                preferred_shelter_id=preferred_shelter_id if preferred_shelter_id else None,
+                latitude=latitude if latitude else None,
+                longitude=longitude if longitude else None
             )
 
             if user:
@@ -45,7 +58,9 @@ def register():
         if error:
             flash(error, 'error')
 
-    return render_template('auth/register.html')
+    # GET request - fetch shelters for dropdown
+    shelters = Shelter.get_all()
+    return render_template('auth/register.html', shelters=shelters)
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():

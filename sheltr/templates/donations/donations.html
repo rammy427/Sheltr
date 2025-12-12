@@ -1,24 +1,46 @@
 {% extends 'base.html' %}
 
+{% block title %}Donations{% endblock %}
+
 {% block header %}
-    <div class="container py-3">
-        <h1 class="text-center mb-0">{% block title %}Donations{% endblock %}</h1>
-    </div>
+    <h1 class="text-center">Donations</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">View recent contributions and make a difference</p>
 {% endblock %}
 
 {% block content %}
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="text-center mb-0">Recent Donations</h2>
+    <div class="container" style="max-width: 1100px; margin: 0 auto;">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 style="color: #334155; margin: 0; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -5px; color: #667eea;">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+                Recent Donations
+            </h2>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ url_for('donations.donation_history') }}" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    My History
+                </a>
+                <a href="{{ url_for('donations.make_donation') }}" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                    Make Donation
+                </a>
+            </div>
         </div>
-    
+
         {% if donations %}
             <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
                             <th scope="col">Emergency</th>
-                            <th scope="col">User</th>
+                            <th scope="col">Donor</th>
                             <th scope="col">Date</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Message</th>
@@ -27,33 +49,28 @@
                     <tbody>
                         {% for donation in donations %}
                             <tr>
-                                <td>{{ donation['emergency_name'] }}</td>
+                                <td style="font-weight: 500;">{{ donation['emergency_name'] }}</td>
                                 <td>{{ donation['username'] }}</td>
-                                <td>{{ donation['donation_date'].strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>{{ '$%.2f'|format(donation['donation_quantity']) }}</td>
-                                <td>{{ donation['donation_message'] }}</td>
+                                <td style="color: #64748b;">{{ donation['donation_date'].strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <span style="font-weight: 600; color: #16a34a;">{{ '$%.2f'|format(donation['donation_quantity']) }}</span>
+                                </td>
+                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    {{ donation['donation_message'] if donation['donation_message'] else '-' }}
+                                </td>
                             </tr>
                         {% endfor %}
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         {% else %}
-            <div class="alert alert-info mb-0" role="alert">
-                No donations found.
+            <div style="text-align: center; padding: 3rem; color: #64748b;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; opacity: 0.5;">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+                <p style="margin: 0; font-size: 1.1rem;">No donations yet.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Be the first to contribute!</p>
             </div>
         {% endif %}
     </div>
-    <div class="container py-4">
-        <div class="text-center">
-            <a href="{{ url_for('donations.make_donation') }}"> 
-                <button class="btn btn-primary"> Donate </button>
-            </a>
-        </div>
-        <div class="text-center py-3">
-            <a href="{{ url_for('donations.donation_history')}}" class="btn btn-secondary">See your donation history</a>
-        </div>
-
-    </div>
-
 {% endblock %}
-

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Payment{% endblock %}
+
+{% block header %}
+    <h1 class="mx-auto text-center">Complete Your Payment</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Secure payment processing</p>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div style="background-color: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin-bottom: 1.5rem; text-align: center;">
+            <p style="color: #92400e; margin: 0; font-weight: 500;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: text-bottom; margin-right: 6px;">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Demo Mode: This is a mockup. No actual payment will be processed.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea;">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+            <h2 style="margin-top: 0.75rem;">Payment Details</h2>
+            <p style="color: #64748b; margin: 0;">Donation Amount: <strong style="color: #1e293b; font-size: 1.25rem;">${{ amount }}</strong></p>
+        </div>
+
+        <form method="post" action="{{ url_for('donations.complete_payment') }}" class="auth-form">
+            {% if provider == 'Credit Card' %}
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: #1e293b; font-size: 1rem; margin-bottom: 1rem;">Credit Card Information</h3>
+
+                <div class="auth-field">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19" pattern="[0-9 ]*" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="auth-field">
+                        <label for="expiry">Expiry Date</label>
+                        <input type="text" id="expiry" name="expiry" placeholder="MM/YY" maxlength="5" pattern="[0-9/]*" required>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" pattern="[0-9]*" required>
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label for="cardholder_name">Name on Card</label>
+                    <input type="text" id="cardholder_name" name="cardholder_name" placeholder="John Doe" required>
+                </div>
+            </div>
+
+            {% elif provider == 'Paypal' %}
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: #1e293b; font-size: 1rem; margin-bottom: 1rem;">PayPal Login</h3>
+
+                <div class="auth-field">
+                    <label for="paypal_email">PayPal Email</label>
+                    <input type="email" id="paypal_email" name="paypal_email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="auth-field">
+                    <label for="paypal_password">PayPal Password</label>
+                    <input type="password" id="paypal_password" name="paypal_password" placeholder="Enter your PayPal password" required>
+                </div>
+
+                <div style="text-align: center; margin-top: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="24" viewBox="0 0 100 32" style="opacity: 0.7;">
+                        <text x="0" y="20" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#003087">Pay</text>
+                        <text x="35" y="20" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#009cde">Pal</text>
+                    </svg>
+                </div>
+            </div>
+
+            {% elif provider == 'Venmo' %}
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: #1e293b; font-size: 1rem; margin-bottom: 1rem;">Venmo Payment</h3>
+
+                <div class="auth-field">
+                    <label for="venmo_username">Venmo Username</label>
+                    <input type="text" id="venmo_username" name="venmo_username" placeholder="@username" required>
+                </div>
+
+                <div style="text-align: center; margin-top: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="#3D95CE" style="opacity: 0.7;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <text x="12" y="16" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">V</text>
+                    </svg>
+                </div>
+            </div>
+
+            {% elif provider == 'Apple Pay' %}
+            <div style="margin-bottom: 1rem; text-align: center;">
+                <h3 style="color: #1e293b; font-size: 1rem; margin-bottom: 1rem;">Apple Pay</h3>
+
+                <div style="background-color: #f8fafc; border-radius: 12px; padding: 2rem; margin: 1.5rem 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #1e293b; margin-bottom: 1rem;">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                    <p style="color: #64748b; font-size: 1.1rem; margin: 0;">Place your finger on Touch ID</p>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">or use Face ID to authorize payment</p>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="24" viewBox="0 0 100 32" style="opacity: 0.7;">
+                        <text x="0" y="22" font-family="-apple-system, sans-serif" font-size="20" font-weight="500" fill="#000000">Apple Pay</text>
+                    </svg>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="auth-actions" style="margin-top: 2rem;">
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Complete Donation
+                </button>
+                <div class="link-row" style="justify-content: center; margin-top: 1rem;">
+                    <a href="{{ url_for('donations.make_donation') }}">Cancel Payment</a>
+                </div>
+            </div>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: center;">
+            <p style="color: #94a3b8; font-size: 0.875rem; margin: 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: text-bottom; margin-right: 4px;">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Your payment information is secure
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

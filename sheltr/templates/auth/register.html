@@ -1,42 +1,46 @@
 {% extends 'base.html' %}
 
+{% block title %}Register{% endblock %}
+
 {% block header %}{% endblock %}
 
 {% block content %}
 <div class="auth-wrapper">
     <div class="auth-card">
         <h2>Join Sheltr</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem;">Create your account and start making a difference</p>
         <form method="post" class="auth-form">
             <div class="auth-field">
                 <label for="name">Full Name *</label>
-                <input type="text" name="name" id="name" maxlength="100" required autofocus value="{{ request.form.get('name', '') }}">
+                <input type="text" name="name" id="name" maxlength="100" required autofocus value="{{ request.form.get('name', '') }}" placeholder="Enter your full name">
             </div>
             <div class="auth-field">
                 <label for="username">Username *</label>
-                <input type="text" name="username" id="username" required value="{{ request.form.get('username', '') }}">
+                <input type="text" name="username" id="username" required value="{{ request.form.get('username', '') }}" placeholder="Choose a username">
             </div>
             <div class="auth-field">
                 <label for="email">Email *</label>
-                <input type="email" name="email" id="email" required value="{{ request.form.get('email', '') }}">
+                <input type="email" name="email" id="email" required value="{{ request.form.get('email', '') }}" placeholder="your@email.com">
             </div>
             <div class="auth-field">
                 <label for="phone">Phone Number</label>
-                <input type="tel" name="phone" id="phone" maxlength="10" pattern="[0-9]*" placeholder="10 digits" value="{{ request.form.get('phone', '') }}">
+                <input type="tel" name="phone" id="phone" maxlength="10" pattern="[0-9]*" placeholder="10 digit number" value="{{ request.form.get('phone', '') }}">
             </div>
             <div class="auth-field">
                 <label for="city">City</label>
-                <input type="text" name="city" id="city" maxlength="12" value="{{ request.form.get('city', '') }}">
+                <input type="text" name="city" id="city" maxlength="12" value="{{ request.form.get('city', '') }}" placeholder="Your city">
             </div>
             <div class="auth-field">
                 <label for="password">Password *</label>
                 <input type="password" name="password" id="password"
                        minlength="8" required
+                       placeholder="Create a strong password"
                        title="Must be at least 8 characters with 1 uppercase, 1 number, and 1 special character">
                 <small>Min 8 characters, 1 uppercase, 1 number, 1 special character</small>
             </div>
             <div class="auth-field">
                 <label for="confirm_password">Confirm Password *</label>
-                <input type="password" name="confirm_password" id="confirm_password" required>
+                <input type="password" name="confirm_password" id="confirm_password" required placeholder="Confirm your password">
             </div>
             <div class="auth-field">
                 <label for="role">I am a:</label>
@@ -45,8 +49,55 @@
                     <option value="manager" {% if request.form.get('role') == 'manager' %}selected{% endif %}>Manager</option>
                 </select>
             </div>
+
+            <div id="volunteer-fields" style="display: none;">
+                <div class="auth-field">
+                    <label for="availability">Availability</label>
+                    <select name="availability" id="availability">
+                        <option value="">Select availability...</option>
+                        <option value="full-time" {% if request.form.get('availability') == 'full-time' %}selected{% endif %}>Full-time</option>
+                        <option value="part-time" {% if request.form.get('availability') == 'part-time' %}selected{% endif %}>Part-time</option>
+                        <option value="weekends" {% if request.form.get('availability') == 'weekends' %}selected{% endif %}>Weekends</option>
+                        <option value="flexible" {% if request.form.get('availability') == 'flexible' %}selected{% endif %}>Flexible</option>
+                    </select>
+                </div>
+
+                <div class="auth-field">
+                    <label for="skills">Skills</label>
+                    <textarea name="skills" id="skills" maxlength="500" rows="4" placeholder="Tell us about your skills and experience...">{{ request.form.get('skills', '') }}</textarea>
+                    <small><span id="skills-count">0</span>/500 characters</small>
+                </div>
+
+                <div class="auth-field">
+                    <label for="preferred_shelter_id">Preferred Shelter</label>
+                    <select name="preferred_shelter_id" id="preferred_shelter_id">
+                        <option value="">Select a shelter...</option>
+                        {% if shelters %}
+                            {% for shelter in shelters %}
+                                <option value="{{ shelter.id }}" {% if request.form.get('preferred_shelter_id') == shelter.id|string %}selected{% endif %}>
+                                    {{ shelter.name }} - {{ shelter.location }}
+                                </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="auth-field">
+                    <label>Location Coordinates</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="flex: 1;">
+                            <input type="number" name="latitude" id="latitude" step="any" min="-90" max="90" placeholder="Latitude" value="{{ request.form.get('latitude', '') }}">
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="number" name="longitude" id="longitude" step="any" min="-180" max="180" placeholder="Longitude" value="{{ request.form.get('longitude', '') }}">
+                        </div>
+                        <button type="button" id="get-location-btn" class="btn-primary" style="white-space: nowrap;">Get My Location</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="auth-actions">
-                <button type="submit" class="btn-primary">Create Account</button>
+                <button type="submit" class="btn-primary" style="width: 100%;">Create Account</button>
                 <div class="link-row">
                     <a href="{{ url_for('auth.login') }}">Back to login</a>
                     <a href="{{ url_for('auth.forgot_password') }}">Need help?</a>
@@ -55,4 +106,68 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Toggle volunteer fields based on role selection
+    const roleSelect = document.getElementById('role');
+    const volunteerFields = document.getElementById('volunteer-fields');
+    const skillsTextarea = document.getElementById('skills');
+    const skillsCount = document.getElementById('skills-count');
+
+    function toggleVolunteerFields() {
+        if (roleSelect.value === 'volunteer') {
+            volunteerFields.style.display = 'block';
+        } else {
+            volunteerFields.style.display = 'none';
+        }
+    }
+
+    // Initialize on page load
+    toggleVolunteerFields();
+
+    // Update on change
+    roleSelect.addEventListener('change', toggleVolunteerFields);
+
+    // Skills character counter
+    function updateSkillsCount() {
+        const count = skillsTextarea.value.length;
+        skillsCount.textContent = count;
+    }
+
+    // Initialize counter
+    updateSkillsCount();
+
+    skillsTextarea.addEventListener('input', updateSkillsCount);
+
+    // Geolocation button
+    const getLocationBtn = document.getElementById('get-location-btn');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+
+    getLocationBtn.addEventListener('click', function() {
+        if ('geolocation' in navigator) {
+            getLocationBtn.textContent = 'Getting location...';
+            getLocationBtn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    latitudeInput.value = position.coords.latitude.toFixed(6);
+                    longitudeInput.value = position.coords.longitude.toFixed(6);
+                    getLocationBtn.textContent = 'Location Set!';
+                    setTimeout(function() {
+                        getLocationBtn.textContent = 'Get My Location';
+                        getLocationBtn.disabled = false;
+                    }, 2000);
+                },
+                function(error) {
+                    alert('Unable to get your location. Please enter coordinates manually.');
+                    getLocationBtn.textContent = 'Get My Location';
+                    getLocationBtn.disabled = false;
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    });
+</script>
 {% endblock %}

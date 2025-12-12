@@ -1,47 +1,67 @@
 {% extends 'base.html' %}
 
+{% block title %}Make a Donation{% endblock %}
+
 {% block header %}
-    <h1 class="mx-auto text-center">{% block title %}Make a Donation{% endblock %}</h1>
+    <h1 class="mx-auto text-center">Make a Donation</h1>
+    <p style="text-align: center; color: rgba(255,255,255,0.85); margin-top: 0.5rem;">Your contribution helps those in need</p>
 {% endblock %}
 
 {% block content %}
 <div class="auth-wrapper">
-    <div class ="auth-card">
-        <form method ="post" class = "auth-card">
+    <div class="auth-card">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea;">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+            <h2 style="margin-top: 0.75rem;">Support Relief Efforts</h2>
+            <p style="color: #64748b; margin: 0;">Choose an emergency and make your impact</p>
+        </div>
+
+        <form method="post" class="auth-form">
             <div class="auth-field">
                 <label for="emergency_id">Select Emergency *</label>
-                <select name="emergency_id" id="emergency_id" class="form-select" required>
-                    <option value="" disabled selected>Select an Emergency</option>
-                    {% for emergency in emergencies%}
-                    <option value="{{ emergency['emergency_id']}}">{{ emergency['emergency_name']}}</option>
+                <select name="emergency_id" id="emergency_id" required>
+                    <option value="" disabled selected>Choose an emergency to support</option>
+                    {% for emergency in emergencies %}
+                        <option value="{{ emergency['emergency_id'] }}">{{ emergency['emergency_name'] }}</option>
                     {% endfor %}
                 </select>
             </div>
+
             <div class="auth-field">
-                <label for="amount">Donation Amount *</label>
-                <input type = "number" name="amount" id="amount" min="1" max="100000" required> 
-            </div> 
+                <label for="amount">Donation Amount ($) *</label>
+                <input type="number" name="amount" id="amount" min="1" max="100000" required placeholder="Enter amount">
+            </div>
+
             <div class="auth-field">
-                <label for="provider">Select payment provider *</label>
-                <select name="provider" id="provider" class="form-select" aria-label="Default select example" required>
-                    <option selected>Select an option</option>
-                    <option value="Paypal">Paypal</option>
+                <label for="provider">Payment Method *</label>
+                <select name="provider" id="provider" required>
+                    <option value="" disabled selected>Select payment method</option>
+                    <option value="Paypal">PayPal</option>
                     <option value="Venmo">Venmo</option>
                     <option value="Apple Pay">Apple Pay</option>
                     <option value="Credit Card">Credit Card</option>
                 </select>
             </div>
+
             <div class="auth-field">
-                <label for="msg">Write a message (optional) *</label>
-                <input type="text" name="msg" id="msg" maxlength="400"> 
+                <label for="msg">Message (Optional)</label>
+                <input type="text" name="msg" id="msg" maxlength="400" placeholder="Leave a message of support">
             </div>
-            <div class="container py-4"></div>
-                <div class="text-center">
-                    <a href="{{ url_for('donations.make_donation') }}"> 
-                        <button class="btn btn-primary" type="submit"> Submit </button>
-                    </a>
+
+            <div class="auth-actions" style="margin-top: 1rem;">
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                    </svg>
+                    Complete Donation
+                </button>
+                <div class="link-row" style="justify-content: center;">
+                    <a href="{{ url_for('donations.view') }}">Back to Donations</a>
                 </div>
             </div>
         </form>
+    </div>
 </div>
 {% endblock %}
